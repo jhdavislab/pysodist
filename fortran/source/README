@@ -1,0 +1,69 @@
+isodist Copyright 2008 James R. Williamson and Michael T. Sykes
+
+Modified by Joey Davis 2020
+
+Contact via the Web:
+--------------------
+http://williamson.scripps.edu/
+
+isodist Webpage:
+----------------
+http://williamson.scripps.edu/isodist/
+
+jhdavislab github repository:
+----------------
+http://jhdavislab.github.com/pysodist
+
+License:
+--------
+isodist is offered under the GNU General Public License (GPL)
+http://www.gnu.org/licenses/gpl.html
+
+Warranty Disclaimer: 
+--------------------
+The software is provided "as is" without warranty of any kind, express or 
+implied, including but not limited to the warranties of merchantability, 
+fitness for a particular purpose and noninfringement. In no event shall 
+the authors or copyright holders be liable for any claim, damages or 
+other liability, whether in an action of contract, tort or otherwise, 
+arising from, out of or in connection with the software or the use or 
+other dealings in the software.
+
+Please cite the following paper when referencing isodist:
+---------------------------------------------------------
+Edit Sperling, Anne Bunner, Michael T. Sykes and James R. Williamson. 
+Quantitative Analysis of Isotope Distributions in Proteomic Mass Spectrometry 
+Using Least-Squares Fourier Transform Convolution. Analytical Chemistry, XX, 
+pp. 0000-1111 (2008). (in press)
+
+Installation:
+-------------
+***********LINUX INSTALLATION***********
+(From within source/ directory)
+make
+
+Then move the resulting isodist executable file to wherever you would like to run the program from, and be sure that directory is in your PATH
+
+
+***********WINDOWS INSTALLATION*********
+Using windows 10, you must first download a fortran compiler
+http://mingw-w64.org/doku.php [info]
+http://mingw-w64.org/doku.php/download/mingw-builds [info]
+https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/installer/mingw-w64-install.exe/download [actual download link]
+Run mingw-w64-install.exe
+Use the following options (note the x86_64 setting)
+*Version 8.1.0
+*Architecture x86_64
+*Threads posix
+*Exception seh
+*Build revision 0
+Choose this path: C:\Program Files\mingw-w64\x86_64-8.1.0-posix-seh-rt_v6-rev0
+
+From the shell (or anaconda powershell)
+cd [isodist source code directory]
+./combile.bat [if this has an error, edit the file and make sure all of the paths listed are correct]
+cp isodist_win.exe [wherever you want to run isodist from]
+
+*************TESTING***************
+cd [path_to_sample_data]/sample_data/14N_partial_TOF
+[isodist_exectuable_create_above] ./14N_partial_TOF

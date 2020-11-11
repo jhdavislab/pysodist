@@ -1,0 +1,102 @@
+avg_wr1=abs(rsd(i))
+avg_wr2=abs(rsd_m(i))
+avg_wr3=abs(rsd_w(i))
+avg_wr4=rsd_sq(i)
+avg_wr5=rsd_sq_m(i)
+avg_wr6=rsd_sq_w(i)
+avg_wr7=rsd_rt(i)
+avg_wr8=rsd_rt_m(i)
+avg_wr9=rsd_rt_w(i)
+avg_wr10=abs(rsd_g(i))
+avg_wr11=rsd_sq_g(i)
+avg_wr12=rsd_rt_g(i)
+avg_wr13=abs(rsd_mm(i))
+avg_wr14=rsd_sq_mm(i)
+avg_wr15=rsd_rt_mm(i)
+avg_wr16=abs(rsd_ww(i))
+avg_wr17=rsd_sq_ww(i)
+avg_wr18=rsd_rt_ww(i)
+avg_wr19=abs(rsd_mmww(i))
+avg_wr20=rsd_sq_mmww(i)
+avg_wr21=rsd_rt_mmww(i)
+
+# normalization for the groups
+A: nmz*max_fit
+B: nmz*sum_fit
+C: sum_fit
+D: sum_sqfit
+E: sum_cbfit
+
+c Calculate a Residual as (fit - data), so multiply "dy" by -1
+c Calculate the residuals
+C	Residual, Residual_Squared, Residual_Rooted
+C	(1)
+	rsd(i)=-1*dy
+C	(4)
+	rsd_sq(i)=dy*dy
+C	(7)
+	rsd_rt(i)=sqrt(abs(dy))
+
+C	Weighted
+C	(3)
+	rsd_w(i)=-1*dy*abs(yfit(i)-bline)
+C	(6)
+	rsd_sq_w(i)=dy*dy*abs(yfit(i)-bline)
+C	(9)
+	rsd_rt_w(i)=sqrt(abs(dy))*abs(yfit(i)-bline)
+
+C	Gently Weighted
+C	(10)
+	rsd_g(i)=-1*dy*sqrt(abs(yfit(i)-bline))
+C	(11)
+	rsd_sq_g(i)=dy*dy*sqrt(abs(yfit(i)-bline))
+C	(12)
+	rsd_rt_g(i)=sqrt(abs(dy))*sqrt(abs(yfit(i)-bline))
+
+C	Masked >10
+	if(abs(yfit(i)-bline).ge.10) then
+C		(2)
+		rsd_m(i)=-1*dy
+C		(5)
+		rsd_sq_m(i)=dy*dy
+C		(8)
+		rsd_rt_m(i)=sqrt(abs(dy))
+	else if(abs(yfit(i)-bline).lt.10) then
+		rsd_m(i)=0
+		rsd_sq_m(i)=0
+		rsd_rt_m(i)=0
+	endif
+
+C	Masked > 0.01*max_fit
+	if(abs(yfit(i)-bline).ge.onepmax) then
+C		(13)
+		rsd_mm(i)=-1*dy
+C		(14)
+		rsd_sq_mm(i)=dy*dy
+C		(15)
+		rsd_rt_mm(i)=sqrt(abs(dy))
+	else
+		rsd_mm(i)=0
+		rsd_sq_mm(i)=0
+		rsd_rt_mm(i)=0
+	endif
+C	Weighted 0->1
+C	(16)
+	rsd_ww(i)=-1*dy*abs(weight)
+C	(17)
+	rsd_sq_ww(i)=dy*dy*abs(weight)
+C	(18)
+	rsd_rt_ww(i)=sqrt(abs(dy))*abs(weight)
+C	Masked (mm) and Weighted (ww)
+	if(abs(yfit(i)-bline).ge.onepmax) then
+C		(19)
+		rsd_mmww(i)=-1*dy*abs(weight)
+C		(20)
+		rsd_sq_mmww(i)=dy*dy*abs(weight)
+C		(21)
+		rsd_rt_mmww(i)=sqrt(abs(dy))*abs(weight)
+	else
+		rsd_mmww(i)=0
+		rsd_sq_mmww(i)=0
+		rsd_rt_mmww(i)=0
+	endif

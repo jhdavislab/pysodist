@@ -1,0 +1,3 @@
+for %%a in (*.f) do "C:\Program Files\mingw-w64\x86_64-8.1.0-posix-seh-rt_v6-rev0\mingw64\bin\gfortran" -O3 -ffixed-line-length-none  -c -o %%a.o %%a
+
+"C:\Program Files\mingw-w64\x86_64-8.1.0-posix-seh-rt_v6-rev0\mingw64\bin\gfortran" -O3 -ffixed-line-length-none auto_baseline.f.o bogus_ft.f.o calc_atoms.f.o calc_iso_dist.f.o calc_model.f.o calc_residues.f.o calc_species.f.o ff_io_lib.f.o fit_sched.f.o init_c.f.o isodist.f.o iso_ft.f.o lmdif1.f.o lmdif_minpack.f.o marq_lmdif1.f.o match_atom.f.o match_residue.f.o model_header.f.o model_params.f.o pep_mw.f.o plotxy_range.f.o read_dino.f.o res_min.f.o rfft_fftpack5.f.o setup_atoms.f.o setup_model.f.o setup_residues.f.o sort_napack.f.o write_model.f.o -o isodist_win.exe

@@ -1,0 +1,3 @@
+file,protein,pep,mw,z_charge,tim,chisq,symb,mz,B,OFF,GW,AMP_U,AMP_L,AMP_F,FRC_NX                                                                                                                        
+peaks_fit3/DYGVLIEEEGVALR_2_781.9_74.0,YG,DYGVLIEEEGVALR,1563.814, 2,2  , 0.31116E+16,19, 781.900, 0.10983E+05, 0.17031E-01, 0.16631E-01, 0.89377E+03, 0.29930E+04, 0.10515E+05, 0.40272E+00,
+peaks_fit3/YGEHSIEVPGAVK_3_462.6_42.5,GE,YGEHSIEVPGAVK,1387.722, 3,3  , 0.12598E+16,19, 462.600, 0.00000E+00, 0.16262E-01, 0.24288E-01, 0.55431E+03, 0.21207E+04, 0.52278E+04, 0.40880E+00,
