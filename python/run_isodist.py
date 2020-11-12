@@ -207,8 +207,8 @@ def prep_model_files(destination_path, atomfile_path, resfile_path):
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Fortran pysodist runner. Used to run fortran implementation of isodist and to clean up the outputs for subsequent plotting.')
-    parser.add_argument('input_file', help='path to the exported_peaks.tsv (produced by extract_spectra.py). This file should be in folder that contains a folder called spectra holding the .tsv of spectra to fit.')
-    parser.add_argument('isodist_command', help='exact fortran command to execute. e.g. C:\isodist\isodist.exe')
+    parser.add_argument('input_file', help='path to the pd_exported_peaks.tsv (produced by extract_spectra.py). This file should be in folder that contains a folder called spectra holding the .tsv of spectra to fit.')
+    parser.add_argument('isodist_command', help='exact fortran command to execute. e.g. ~/software/pysodist/fortran/isodist or C:/isodist_win/isodist_win.exe')
     parser.add_argument('atomfile', help='Specify the path to the atom definition file (e.g. exp_atom_defs.txt). You will likely not need to modify this file.')
     parser.add_argument('resfile', help='Specify the path to the residue labeling file - you will likely need to edit this file based on your labeling scheme.\
                         Note that your output will use the name of this file to ensure you know which model file produced which output.')
@@ -217,7 +217,7 @@ def parse_args():
 
     parser.add_argument('--threads', default=2, type=int, help='number of threads to use. typically 1 less than the number of cores available. Default=2')
     parser.add_argument('--wait_time', default=120, type=int, help='number of seconds to wait between each polling to test if the isodist run has finished. Default=120 seconds')
-    parser.add_argument('--pysodist_input', default=None, help='Optional path to the "parsed" file produced by parse_input. Typically a .tsv file that has extracted the relevant info from a Skyline report. Useful in providing additional info such as protein name for each peptide.')
+    parser.add_argument('--pysodist_input', default=None, help='Optional path to the "pd_parsed_report.tsv" file produced by parse_input. Typically a .tsv file that has extracted the relevant info from a Skyline report. Useful in providing additional info such as protein name for each peptide.')
     parser.add_argument('--no_cleanup', action='store_const', const=True, default=False, help='Optionally do not clean up the folder my moving around and deleting the intermediate files.')
     return parser
 

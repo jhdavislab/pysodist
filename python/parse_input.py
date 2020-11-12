@@ -166,7 +166,6 @@ def parse_args():
 
 def main(args):
     sample_list = args.sample_list
-    print(len(sample_list))
     parse_skyline(args.input, sample_list = sample_list, protein_list=args.protein_list,
                   isotope=args.isotope, q_value=args.q_value, 
                   output_directory=args.output_directory,IO = True)
