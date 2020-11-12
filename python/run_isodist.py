@@ -14,6 +14,7 @@ import pandas as pd
 import os
 import shutil
 import glob
+import math
 
 def wait(processes, limit, wait_time):
     while len(processes) >= limit:
@@ -160,18 +161,16 @@ def write_isodist_input(batch_file_path, atomfile, resfile, niter=5, sigma=100.0
         output.write(str(offset) + ' = OFF : initial guess for accuracy offset (Default = 0.005)\n')
         output.write(str(GW) + ' = GW : initial guess for gaussian width (Default = 0.05)\n')
     return in_file_path
-def write_batch_files(spectra_tsv, batch_size=300):
+def write_batch_files(batch_df, batch_base_path, batch_size=300):
     '''
     Write the appropriate batch file(s)
     
-    :param spectra_tsv: the full tsv of the spectra to be fit
+    :param spectra_df: the full dataframe of the spectra to be fit
+    :param batch_base_path: swting with the full path to the directory where the batches will be written.
     :param batch_size: the number of peptides to put into a single batch for isodist
 
     returns: a list of pairs with the full path, and t.
     '''
-    batch_df = pd.read_csv(spectra_tsv, sep='\t')
-    
-    batch_base_path = '/'.join(spectra_tsv.split('/')[:-1])+'/'
 
     if os.path.exists(batch_base_path+'batch_0.batch'):
         print(batch_base_path+'_0.batch already exists. Procceding will delete this file and start fresh.')
@@ -214,7 +213,7 @@ def parse_args():
     parser.add_argument('resfile', help='Specify the path to the residue labeling file - you will likely need to edit this file based on your labeling scheme.\
                         Note that your output will use the name of this file to ensure you know which model file produced which output.')
     
-    parser.add_argument('--batch_size', default=300, type=int, help='Number of peptides to be fit in each batch by isodist.')
+    #parser.add_argument('--batch_size', default=300, type=int, help='Number of peptides to be fit in each batch by isodist.')
 
     parser.add_argument('--threads', default=2, type=int, help='number of threads to use. typically 1 less than the number of cores available. Default=2')
     parser.add_argument('--wait_time', default=120, type=int, help='number of seconds to wait between each polling to test if the isodist run has finished. Default=120 seconds')
@@ -227,9 +226,9 @@ def main(args):
     input_file = args.input_file.replace('\\', '/')
     atomfile = args.atomfile.replace('\\', '/')
     resfile = args.resfile.replace('\\', '/')
-    working_dir = '/'.join(input_file.split('/')[:-1])
     isodist_command = args.isodist_command.replace('\\', '/')
-    
+
+    working_dir = '/'.join(input_file.split('/')[:-1])    
     resfile_name = resfile.split('/')[-1].split('.txt')[0]
     output = working_dir+'/'+resfile_name+'_output.csv'
     
@@ -239,7 +238,11 @@ def main(args):
     print('working in directory: '+working_dir)
     prep_model_files(working_dir, atomfile, resfile)
     
-    batch_file_path_list = write_batch_files(input_file, batch_size=args.batch_size)
+    batch_base_path = '/'.join(input_file.split('/')[:-1])+'/'
+    batch_df = pd.read_csv(input_file, sep='\t')
+    num_spectra = batch_df.shape[0]
+    batch_size = math.ceil(num_spectra/args.threads)
+    batch_file_path_list = write_batch_files(batch_df, batch_base_path, batch_size=batch_size)
     
     in_file_list = []
     for batch_file_path in batch_file_path_list:

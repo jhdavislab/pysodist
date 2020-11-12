@@ -12,6 +12,8 @@ import run_isodist
 import plot_spectra
 import os
 import argparse
+import pandas as pd
+import math
 
 def parse_args():
     #required
@@ -26,7 +28,7 @@ def parse_args():
                         Note that your output will use the name of this file to ensure you know which model file produced which output.')
     
     #fortran isodist specific
-    parser.add_argument('--batch_size', default=50, type=int, help='Number of peptides to be fit in each batch by isodist.')
+    #parser.add_argument('--batch_size', default=50, type=int, help='Number of peptides to be fit in each batch by isodist.')
     parser.add_argument('--threads', default=4, type=int, help='number of threads to use. typically 1 less than the number of cores available. Default=2')
     parser.add_argument('--wait_time', default=60, type=int, help='number of seconds to wait between each polling to test if the isodist run has finished. Default=120 seconds')
     
@@ -83,7 +85,11 @@ def main(args):
     print('working in directory: '+sample_output_directory)
     run_isodist.prep_model_files(sample_output_directory, atomfile, resfile)
     
-    batch_file_path_list = run_isodist.write_batch_files(isodist_input_file, batch_size=args.batch_size)
+    batch_base_path = '/'.join(isodist_input_file.split('/')[:-1])+'/'
+    batch_df = pd.read_csv(isodist_input_file, sep='\t')
+    num_spectra = batch_df.shape[0]
+    batch_size = math.ceil(num_spectra/args.threads)
+    batch_file_path_list = run_isodist.write_batch_files(batch_df, batch_base_path, batch_size=batch_size)
     
     in_file_list = []
     for batch_file_path in batch_file_path_list:
@@ -146,12 +152,6 @@ def main(args):
                     saved_output_path=plot_output_folder, png=not(args.no_png), pdf=not(args.no_pdf))
     print('plotting the csv stat histograms...') 
     plot_spectra.plot_csv_stats(isodist_output_pd, current_ratio_string, output_path=plot_output_folder, png=not(args.no_png), pdf=not(args.no_pdf))
-
-    
-
-    
-
-    
 
 if __name__ == "__main__":
     main(parse_args().parse_args())
