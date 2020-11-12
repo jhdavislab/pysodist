@@ -1,5 +1,5 @@
 import pandas as pd
-import skyline_report_defs as defs
+import pysodist.utils.skyline_report_defs as defs
 import argparse
 import os
 
@@ -154,8 +154,7 @@ def parse_skyline(path_to_skyline_csv, output_directory, sample_list=None, prote
                                           'mz', 'protein_IDs', 'start_pos', 'end_pos'], index=False)
     return output_list
 
-def parse_args():
-    parser = argparse.ArgumentParser(description='Pysodist input file parser. Used to parse report files from tools such as Skyline, EncyclopeDIA, or TPP, which provide a list of detected peptides and retention times. Currently, only skyline report file parsing is implemented.')
+def add_args(parser):
     parser.add_argument('input', help='input file to parse.')
     parser.add_argument('--output_directory', default='./', help='Output files will be saved in this folder: 1 directory per sample in the skyline report. Default = ./')
     parser.add_argument('--sample_list', nargs='*', default=None, help='An optional list of samples to parse. By default all samples in the report are analyzed.')
@@ -171,5 +170,6 @@ def main(args):
                   output_directory=args.output_directory,IO = True)
 
 if __name__ == "__main__":
-    main(parse_args().parse_args())
-    
+    parser = argparse.ArgumentParser(description='Pysodist input file parser. Used to parse report files from tools such as Skyline, EncyclopeDIA, or TPP, which provide a list of detected peptides and retention times. Currently, only skyline report file parsing is implemented.')
+    add_args(parser)
+    main(parser.parse_args()) 

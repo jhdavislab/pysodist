@@ -4,18 +4,17 @@ Created on Sat Oct 24 14:04:54 2020
 
 @author: joeyd
 """
-__VERSION__ = '0.1.0'
 
-import parse_input
-import extract_spectra
-import run_isodist
-import plot_spectra
+import pysodist.commands.parse_input as parse_input
+import pysodist.commands.extract_spectra as extract_spectra
+import pysodist.commands.run_isodist as run_isodist
+import pysodist.commands.plot_spectra as plot_spectra
 import os
 import argparse
 import pandas as pd
 import math
 
-def parse_args():
+def add_args(parser):
     #required
     parser = argparse.ArgumentParser(description='Pysodist runner - links together the various pysodist modules (parse_input, extract_spectra, run_isodist, plot_spectra.')
     parser.add_argument('input', help='input file to parse. Currently only skyline report files are supported')
@@ -154,4 +153,6 @@ def main(args):
     plot_spectra.plot_csv_stats(isodist_output_pd, current_ratio_string, output_path=plot_output_folder, png=not(args.no_png), pdf=not(args.no_pdf))
 
 if __name__ == "__main__":
-    main(parse_args().parse_args())
+    parser = argparse.ArgumentParser(description='Pysodist runner - links together the various pysodist modules (parse_input, extract_spectra, run_isodist, plot_spectra.')
+    add_args(parser)
+    main(parser.parse_args())

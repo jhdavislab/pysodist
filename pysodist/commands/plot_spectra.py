@@ -434,7 +434,7 @@ def plot_csv_stats(id_output, current_ratio_string, output_path=None, png=True, 
         plt.close()
     return fig
 
-def parse_args():
+def add_args(parser):
     parser = argparse.ArgumentParser(description='Pysodist plotter - used to generate and save plots of the isodist fits. Also saves relevant datastructures to be \
                                      interactively analyzed using jupyter notebooks')
     parser.add_argument('input_file', help='path to the combiled isodist .csv file bearing all of the results (1 row per fit spectra).')
@@ -502,4 +502,7 @@ def main(args):
     plot_csv_stats(isodist_output, current_ratio_string, output_path=output_folder, png=not(args.no_png), pdf=not(args.no_pdf))
 
 if __name__ == "__main__":
-    main(parse_args().parse_args())
+    parser = argparse.ArgumentParser(description='Pysodist plotter - used to generate and save plots of the isodist fits. Also saves relevant datastructures to be \
+                                     interactively analyzed using jupyter notebooks')
+    add_args(parser)
+    main(parser.parse_args())

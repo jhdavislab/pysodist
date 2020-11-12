@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="pysodist", # Replace with your own username
-    version="0.0.1",
+    version="0.0.1b0",
     author="Joey Davis",
     author_email="jhdavis@mit.edu",
     description="A python-based implementation of the isodist fitting routines",

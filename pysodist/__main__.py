@@ -11,13 +11,14 @@ def main():
     import pysodist.commands.run_isodist
     import pysodist.commands.plot_spectra
     import pysodist.commands.full_pipeline
-    import pysodist.skyline_report_defs
+#    import pysodist.utils.skyline_report_defs
 
     modules = [pysodist.commands.parse_input,
         pysodist.commands.extract_spectra,
         pysodist.commands.run_isodist,
         pysodist.commands.plot_spectra,
         pysodist.commands.full_pipeline,
+       # pysodist.utils.skyline_report_defs,
         ]
 
     subparsers = parser.add_subparsers(title='Choose a command')
