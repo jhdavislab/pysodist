@@ -301,7 +301,7 @@ def get_by_protein(id_output, protein_name):
     #to get just the list of peptides: list(set(get_by_protein(id_output, 'ENO2_YEAST')['pep'].values))
     return id_output[id_output['protein'].str.contains(protein_name)]
 
-def plot_ratios(related_spectra, y_label, marker_size=6, palette='crest', fig_height=4):
+def plot_ratios(related_spectra, y_label, marker_size=6, palette='winter', fig_height=4):
     '''
     Plots a single axis with a series of related spectra - typically all of the spectra for a given protein. 
     They are broken into groups based on the peptide field, and the y-value is whatever is in "current_ratio"; this should be calculated 
@@ -312,7 +312,7 @@ def plot_ratios(related_spectra, y_label, marker_size=6, palette='crest', fig_he
     related_spectra :  a pandas dataframe with the subset of related spectral rows.
     y_label : a string describing what the current ratio field is reporting.
     marker_size : float, optional. The default is 6.
-    palette : string, optional string for the color pallet to use as one moves along the peak position. The default is 'crest'.
+    palette : string, optional string for the color pallet to use as one moves along the peak position. The default is 'winter'.
 
     Returns
     -------
