@@ -8,7 +8,7 @@ Created on Tue Oct 20 15:29:11 2020
 import numpy as np
 import pandas as pd
 import pickle
-import davis_lab_quant_report_defs_v2 as defs
+import skyline_report_defs as defs
 from pyteomics import mzml
 import re
 import os

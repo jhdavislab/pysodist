@@ -1,5 +1,5 @@
 import pandas as pd
-import davis_lab_quant_report_defs_v2 as defs
+import skyline_report_defs as defs
 import argparse
 import os
 
