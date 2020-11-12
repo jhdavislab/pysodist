@@ -7,6 +7,8 @@ Created on Thu Oct 22 16:56:18 2020
 import warnings
 warnings.filterwarnings("ignore")
 import os
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
