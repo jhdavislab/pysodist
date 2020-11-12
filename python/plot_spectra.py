@@ -395,7 +395,7 @@ def set_current_ratio(id_output, numerator=['AMP_U'], denominator=['AMP_U', 'AMP
     id_output.loc[:,'current_ratio'] = (id_output[numerator].sum(axis=1)/id_output[denominator].sum(axis=1)).round(3)
     return id_output
 
-def plot_csv_stats(id_output, current_ratio_string, output_path=None, png=True, pdf=False, histo_fields = ['chisq', 'B', 'OFF', 'GW', 'current_ratio']):
+def plot_csv_stats(id_output, current_ratio_string, output_path=None, png=True, pdf=False, histo_fields = ['chisq', 'B', 'OFF', 'GW', 'current_ratio', 'FRC_NX', 'FRC_NY']):
     '''
     Plots histograms of fields from the parsed pandas dataframe. Also plots histograms for numerator/denominator, and numerator/(numerator+denominator) for each spectra.
 
@@ -404,13 +404,14 @@ def plot_csv_stats(id_output, current_ratio_string, output_path=None, png=True, 
     id_output : full isodist pandas dataframe pandas dataframe (result of parse_isodist_csv)
     current_ratio_string : string to label the current ratio plots.
     output_file : string of the full path to the file to save (should include extension). Optional, default is None
-    histo_fields : list of strings with the isodist fields to plot histograms for. optional, default is ['chisq', 'B', 'OFF', 'GW'].
+    histo_fields : list of strings with the isodist fields to plot histograms for. optional, default is ['chisq', 'B', 'OFF', 'GW', 'FRC_NX', 'FRC_NY'].
 
     Returns
     -------
     the resulting figure.
 
     '''
+    histo_fields = [h for h in histo_fields if h in id_output.columns]
     num_rows = len(histo_fields)
     fig,axes = plt.subplots(nrows=num_rows, ncols=2, figsize=[10.5,8])
     for row, field in enumerate(histo_fields):
