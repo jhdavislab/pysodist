@@ -180,6 +180,7 @@ def write_batch_files(batch_df, batch_base_path, batch_size=300):
                 os.remove(file)
     assert(os.path.exists(batch_base_path+'batch_0.batch') is False)
     required_batches = batch_df.shape[0]//batch_size + 1
+    print('there are ' + str(batch_df.shape[0]) + ' total spectra to fit...')
     print('writing ' + str(required_batches) + ' batch files...')
     
     written_list = []
@@ -252,4 +253,4 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Fortran pysodist runner. Used to run fortran implementation of isodist and to clean up the outputs for subsequent plotting.')
     add_args(parser)
-    main(parser.parser_args())
+    main(parser.parse_args())

@@ -48,7 +48,7 @@ def extract_skyline_sub(full_dataframe, sample, protein_list=None, isotope='ligh
                      isotope+' '+sample+' '+defs.DETECT_Q_VALUE_FIELD,
                      defs.START_POS_FIELD,
                      defs.END_POS_FIELD]#fill this in with the columns you need - use the isotope info to get the right ones
-    new_data_frame = full_dataframe.loc[:,required_cols]
+    new_data_frame = full_dataframe.reindex(columns=required_cols)
     assert required_cols[0] in full_dataframe.columns, 'the provided sample is likely not present. Check the sample name.'
     if not(protein_list is None):
         new_data_frame = new_data_frame[new_data_frame[defs.PROTEIN_PREFERRED_NAME_FIELD].isin(protein_list)]

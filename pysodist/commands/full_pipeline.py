@@ -9,14 +9,15 @@ import pysodist.commands.parse_input as parse_input
 import pysodist.commands.extract_spectra as extract_spectra
 import pysodist.commands.run_isodist as run_isodist
 import pysodist.commands.plot_spectra as plot_spectra
+import pysodist
 import os
 import argparse
 import pandas as pd
 import math
+import subprocess
 
 def add_args(parser):
     #required
-    parser = argparse.ArgumentParser(description='Pysodist runner - links together the various pysodist modules (parse_input, extract_spectra, run_isodist, plot_spectra.')
     parser.add_argument('input', help='input file to parse. Currently only skyline report files are supported')
     parser.add_argument('mzml', help='the relative path to mzml file to be analyzed. For Thermo instruments, one should generate the .mzml file from the original .raw file using msconvert as follows: \
                                     .\msconvert.exe ".\[YOUR_RAW_FILE].raw" -o "./" --mzML --64 -v mz64 --inten32 --noindex --filter "msLevel 1" --zlib')
@@ -28,8 +29,8 @@ def add_args(parser):
     
     #fortran isodist specific
     #parser.add_argument('--batch_size', default=50, type=int, help='Number of peptides to be fit in each batch by isodist.')
-    parser.add_argument('--threads', default=4, type=int, help='number of threads to use. typically 1 less than the number of cores available. Default=2')
-    parser.add_argument('--wait_time', default=60, type=int, help='number of seconds to wait between each polling to test if the isodist run has finished. Default=120 seconds')
+    parser.add_argument('--threads', default=4, type=int, help='number of threads to use. typically 1 less than the number of cores available. Default=4')
+    parser.add_argument('--wait_time', default=60, type=int, help='number of seconds to wait between each polling to test if the isodist run has finished. Default=60 seconds')
     
     #extract spectra specific
     parser.add_argument('--output_directory', default='./', help='Output files will be saved in this folder: 1 directory per sample in the skyline report. Default = ./')
@@ -42,8 +43,8 @@ def add_args(parser):
     parser.add_argument('--interp_res', default=0.001, type=float, help='Set the interpolation delta m/z - typical values from 0.01 to 0.001')
     
     #plotting specific
-    parser.add_argument('--numerator', nargs='+', default=['AMP_U'], help='list of the fields to use in the numerator of the abundance ratio calculation (typically AMP_U, AMP_L, AMP_F, or some combination')
-    parser.add_argument('--denominator', nargs='+', default=['AMP_U', 'AMP_F'], help='list of the fields to use in the denominator of the abundance ratio calculation (typically AMP_U, AMP_L, AMP_F, or some combination')
+    parser.add_argument('--numerator', nargs='+', default=['AMP_U'], help='list of the fields to use in the numerator of the abundance ratio calculation (typically AMP_U, AMP_L, AMP_F, or some combination. Default is AMP_U.')
+    parser.add_argument('--denominator', nargs='+', default=['AMP_U', 'AMP_F'], help='list of the fields to use in the denominator of the abundance ratio calculation (typically AMP_U, AMP_L, AMP_F, or some combination. Default is AMP_U, AMP_F')
     parser.add_argument('--no_png', action='store_const', const=True, default=False, help='By default .png files for the plots will be saved. This option forces these to not be saved.')
     parser.add_argument('--no_pdf', action='store_const', const=True, default=False, help='By default .pdf files for the plots will be saved. This option forces these to not be saved.')
     
@@ -151,6 +152,16 @@ def main(args):
                     saved_output_path=plot_output_folder, png=not(args.no_png), pdf=not(args.no_pdf))
     print('plotting the csv stat histograms...') 
     plot_spectra.plot_csv_stats(isodist_output_pd, current_ratio_string, output_path=plot_output_folder, png=not(args.no_png), pdf=not(args.no_pdf))
+
+    print('copying analysis_template.ipynb jupyter notebook...')
+    out_ipynb = plot_output_folder+ 'pysodist_analysis.ipynb'
+    if not os.path.exists(out_ipynb):
+        root_path = pysodist._ROOT+'/'
+        ipynb = root_path+'utils/analysis_template.ipynb'
+        cmd = f'cp {ipynb} {out_ipynb}'
+        subprocess.check_call(cmd, shell=True)
+    else:
+        print(f'{out_ipynb} already exists. Skipping')
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Pysodist runner - links together the various pysodist modules (parse_input, extract_spectra, run_isodist, plot_spectra.')

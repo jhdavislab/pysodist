@@ -81,7 +81,7 @@ def read_spectra(isodist_result, isodist_fit_folder, working_path='./', extensio
                                  '+'+str(isodist_result['z_charge']),isodist_result['retention_time'] + ' mins'])
     return {'data': spectra_pd, 'name': plottable_name, 'isodist_output': isodist_result}
 
-def plot_fits(spectral_dict, main_axis, resid_axis, numerator=['AMP_U'], denominator=['AMP_U', 'AMP_F'],
+def plot_fit(spectral_dict, main_axis, resid_axis, numerator=['AMP_U'], denominator=['AMP_U', 'AMP_F'],
               ignore_fields=['file', 'protein', 'pep', 'mw', 'z_charge', 'retention_time', 'UID', 'CID', 'clean_RT', 'peak_position', 'current_ratio'], fontsize=8, output=None):
     '''
     Plot individual isodist fit on a dual axis, with the raw data and fit data on the top, and the residual on the bottom
@@ -173,7 +173,7 @@ def parse_raw(batch_row):
             'raw_data':batch_row['spectra'], 'fit_data':fit_file, 'dat_file':dat_file, 
             'charge':batch_row['charge'], 'pep_seq':batch_row['pep_seq']}
 
-def plot_single_spectra(id_row, fit_folder, resolution=-1, fig_size=(4,6), fontsize=6, 
+def plot_single_spectra(id_row, fit_folder, working_path='./', extension='.tsv', resolution=-1, fig_size=(4,6), fontsize=6, 
                        numerator=['AMP_U'], denominator=['AMP_U', 'AMP_F'], 
                         ignore_fields=['file', 'protein', 'pep', 'mw', 'z_charge', 'retention_time', 'UID', 'CID', 'clean_RT', 'peak_position', 'current_ratio']):
     '''
@@ -183,6 +183,8 @@ def plot_single_spectra(id_row, fit_folder, resolution=-1, fig_size=(4,6), fonts
     ----------
     id_row : the row from an isodist pandas dataframe (result of parse_isodist_csv)
     fit_folder : string of the full path to the folder containing the fit files.
+    working_path : string with the full path to the working directory. Optional, default = './'
+    extension : string with the spectra file type extension (default is .tsv).
     resolution : float, optionally interpolate the spectra at the given m/z resolution spaces. -1 does not interpolate. The default is -1.
     fig_size : tuple of floats with the zsize of the resulting figures. The default is (4,6).
     fontsize : float with the font size. The default is 6.
@@ -195,9 +197,9 @@ def plot_single_spectra(id_row, fit_folder, resolution=-1, fig_size=(4,6), fonts
     A list with the main figure axis and the residual figure axis.
 
     '''
-    spectral_dict = read_spectra(id_row, fit_folder, resolution=resolution)
-    fig, axes = plt.subplots(ncols=1, nrows=2, gridspec_kw={'height_ratios': [5, 1]}, figsize=fig_size)
-    main, resid = plot_fits(spectral_dict, axes[0], axes[1], 
+    spectral_dict = read_spectra(id_row, fit_folder, working_path=working_path, extension=extension, resolution=resolution)
+    fig, axes = plt.subplots(ncols=1, nrows=2, gridspec_kw={'height_ratios': [5, 1]}, figsize=fig_size, sharex=True)
+    main, resid = plot_fit(spectral_dict, axes[0], axes[1], 
               numerator=numerator, denominator=denominator, ignore_fields=ignore_fields, fontsize=fontsize)
     
     return [main,resid]
@@ -254,7 +256,7 @@ def plot_spectra_group(id_output, fit_folder, working_path='./', page_size=(22,1
             main_row = (counter//fig_cols)*2
             resid_row = main_row+1
             
-            plot_fits(plottable_dict, axes[main_row,main_col], axes[resid_row, resid_col], numerator=numerator, denominator=denominator, ignore_fields=ignore_fields)
+            plot_fit(plottable_dict, axes[main_row,main_col], axes[resid_row, resid_col], numerator=numerator, denominator=denominator, ignore_fields=ignore_fields)
         plt.tight_layout()
         if not saved_output is None:
             current_page_output = saved_output+'_'+str(page)
@@ -334,6 +336,7 @@ def plot_ratios(related_spectra, y_label, marker_size=6, palette='winter', fig_h
         current_axis = sns.scatterplot(data=peptides_df, x='peak_position', y='current_ratio', hue='peak_position', ax=current_axis, palette=palette)
         current_axis.set_xlabel(peptide)
         current_axis.get_legend().remove()
+        current_axis.set_ylabel(y_label)
     #sns.swarmplot(x='pep', y='current_ratio', hue='peak_position', data=related_spectra, dodge=True, size=marker_size, ax=axis, palette=palette) #TOO SLOW
     #sns.stripplot(x='pep', y='current_ratio', hue='peak_position', data=related_spectra, dodge=True, size=marker_size, ax=axis, palette=palette) #TOO SLOW
     #sns.boxplot(x='pep', y='current_ratio', data=related_spectra, ax=axis, color='w')
@@ -361,6 +364,7 @@ def plot_all_ratios(id_output, numerator=['AMP_U'], denominator=['AMP_U', 'AMP_F
     '''
     
     y_label = '['+'+'.join([num for num in numerator])+']/['+'+'.join([den for den in denominator])+']'
+    id_output = set_current_ratio(id_output, numerator=numerator, denominator=denominator)
     if protein_list is None:
         protein_list = list(set(id_output['protein'].values))
     protein_list.sort()
@@ -395,7 +399,7 @@ def set_current_ratio(id_output, numerator=['AMP_U'], denominator=['AMP_U', 'AMP
     id_output.loc[:,'current_ratio'] = (id_output[numerator].sum(axis=1)/id_output[denominator].sum(axis=1)).round(3)
     return id_output
 
-def plot_csv_stats(id_output, current_ratio_string, output_path=None, png=True, pdf=False, histo_fields = ['chisq', 'B', 'OFF', 'GW', 'current_ratio', 'FRC_NX', 'FRC_NY']):
+def plot_csv_stats(id_output, current_ratio_string, output_path=None, png=True, pdf=False, histo_fields = ['chisq', 'B', 'OFF', 'GW', 'current_ratio', 'FRC_NX', 'FRC_NY'], figsize=[10,12], bins=100):
     '''
     Plots histograms of fields from the parsed pandas dataframe. Also plots histograms for numerator/denominator, and numerator/(numerator+denominator) for each spectra.
 
@@ -405,6 +409,8 @@ def plot_csv_stats(id_output, current_ratio_string, output_path=None, png=True, 
     current_ratio_string : string to label the current ratio plots.
     output_file : string of the full path to the file to save (should include extension). Optional, default is None
     histo_fields : list of strings with the isodist fields to plot histograms for. optional, default is ['chisq', 'B', 'OFF', 'GW', 'FRC_NX', 'FRC_NY'].
+    figsize : tuple with the desired figure size. Optional, default is [10,12].
+    bins : int for the number of bins in the histograms. Optional, default is 100.
 
     Returns
     -------
@@ -413,17 +419,13 @@ def plot_csv_stats(id_output, current_ratio_string, output_path=None, png=True, 
     '''
     histo_fields = [h for h in histo_fields if h in id_output.columns]
     num_rows = len(histo_fields)
-    fig,axes = plt.subplots(nrows=num_rows, ncols=2, figsize=[10.5,8])
+    fig,axes = plt.subplots(nrows=num_rows, ncols=2, figsize=figsize)
     for row, field in enumerate(histo_fields):
-        sns.histplot(id_output, x=field, ax=axes[row, 0], bins=100)
-        sns.histplot(id_output, x=field, ax=axes[row, 1], bins=100)
+        sns.histplot(id_output, x=field, ax=axes[row, 0], bins=bins)
+        sns.histplot(id_output, x=field, ax=axes[row, 1], bins=bins)
         median = id_output[field].median()
         std = id_output[field].std()
         axes[row,1].set_xlim([median-std, median+std])
-        
-
-    axes[num_rows-1,0].set_xlabel(current_ratio_string)
-    axes[num_rows-1,1].set_xlabel(current_ratio_string)
 
     plt.tight_layout()
     if not(output_path is None):
@@ -435,13 +437,11 @@ def plot_csv_stats(id_output, current_ratio_string, output_path=None, png=True, 
     return fig
 
 def add_args(parser):
-    parser = argparse.ArgumentParser(description='Pysodist plotter - used to generate and save plots of the isodist fits. Also saves relevant datastructures to be \
-                                     interactively analyzed using jupyter notebooks')
     parser.add_argument('input_file', help='path to the combiled isodist .csv file bearing all of the results (1 row per fit spectra).')
     parser.add_argument('fit_folder', help='path to the folder containing all of the isodist .fit files.')
     parser.add_argument('output_folder', help='path to a folder to save all of the fits into. Will be created if it does not exist.')
-    parser.add_argument('--numerator', nargs='+', default=['AMP_U'], help='list of the fields to use in the numerator of the abundance ratio calculation (typically AMP_U, AMP_L, AMP_F, or some combination')
-    parser.add_argument('--denominator', nargs='+', default=['AMP_U', 'AMP_F'], help='list of the fields to use in the denominator of the abundance ratio calculation (typically AMP_U, AMP_L, AMP_F, or some combination')
+    parser.add_argument('--numerator', nargs='+', default=['AMP_U'], help='list of the fields to use in the numerator of the abundance ratio calculation (typically AMP_U, AMP_L, AMP_F, or some combination. Default is AMP_U')
+    parser.add_argument('--denominator', nargs='+', default=['AMP_U', 'AMP_F'], help='list of the fields to use in the denominator of the abundance ratio calculation (typically AMP_U, AMP_L, AMP_F, or some combination. Default is AMP_U, AMP_F')
     parser.add_argument('--no_png', action='store_const', const=True, default=False, help='By default .png files for the plots will be saved. This option forces these to not be saved.')
     parser.add_argument('--no_pdf', action='store_const', const=True, default=False, help='By default .pdf files for the plots will be saved. This option forces these to not be saved.')
     
@@ -473,11 +473,17 @@ def main(args):
     
     try:
         os.mkdir(output_folder)
+        os.mkdir(output_folder+'interactive_plots/')
+        # copy over template if file doesn't exist
     except OSError:
         print('...the output directory: ' + output_folder + ' already exists, and files within it may be overwritten. continue? [y/n]')
         choice = input().lower()
         if not choice=='y':
             raise
+
+    print('creating jupyter notebook for interactive analysis...')
+    source = f'{pysodist._ROOT}/utils/analysis_template.ipynb'
+    shutil.copyfile(source, output_folder+'interatcive_plots/analysis_template.ipynb')
 
     isodist_output.to_csv(output_folder+'isodist_result.csv')
     
