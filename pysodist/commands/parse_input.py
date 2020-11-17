@@ -1,3 +1,7 @@
+'''
+@author: Joey Davis <jhdavis@mit.edu> jhdavislab.org
+'''
+
 import pandas as pd
 import pysodist.utils.skyline_report_defs as defs
 import argparse
