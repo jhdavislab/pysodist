@@ -199,6 +199,8 @@ I strongly recommend a labeling scheme similar to this [species1_species2_specie
 
 * Note that any modified amino acids can be specified here - we have included entries for oxidized methionine and modified cysteine, but more can be added. Please contact me directly to implement additional modifications.
 
+run_isodist inputs:
+
     $ pysodist run_isodist -h
     usage: pysodist run_isodist [-h] [--threads THREADS] [--wait_time WAIT_TIME]
                                 [--pysodist_input PYSODIST_INPUT] [--no_cleanup]
