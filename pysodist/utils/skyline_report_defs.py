@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+"""
+@author: Joey Davis <jhdavis@mit.edu> jhdavislab.org
+"""
+
 import pandas as pd
 ########################################################
 #####SKYLINE REPORT FIELD DEFINITIONS###################
