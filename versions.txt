@@ -1,2 +1,3 @@
 0.0.1b0 : prerelease
 0.0.2 : initial release
+0.0.3 : minor revision to interactive notebook
