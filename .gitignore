@@ -1,3 +1,6 @@
 *.pyc
 ___pycache__
 *.o
+build/
+dist/
+pysodist.egg-info/

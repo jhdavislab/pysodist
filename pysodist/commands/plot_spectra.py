@@ -16,7 +16,8 @@ import pandas as pd
 from os import path
 import argparse
 warnings.filterwarnings("default")
-
+import pysodist
+import shutil
 
 ''' This tool is designed to plot the fitted outputs from isodist (pysodist). It produces a series of images that users can inspect.
     * requires inputs of a .csv file output by isodist as well as the .fit files
@@ -473,7 +474,6 @@ def main(args):
     
     try:
         os.mkdir(output_folder)
-        os.mkdir(output_folder+'interactive_plots/')
         # copy over template if file doesn't exist
     except OSError:
         print('...the output directory: ' + output_folder + ' already exists, and files within it may be overwritten. continue? [y/n]')
@@ -483,7 +483,7 @@ def main(args):
 
     print('creating jupyter notebook for interactive analysis...')
     source = f'{pysodist._ROOT}/utils/analysis_template.ipynb'
-    shutil.copyfile(source, output_folder+'interatcive_plots/analysis_template.ipynb')
+    shutil.copyfile(source, output_folder+'/analysis_template.ipynb')
 
     isodist_output.to_csv(output_folder+'isodist_result.csv')
     
