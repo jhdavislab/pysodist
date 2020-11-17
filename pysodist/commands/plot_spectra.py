@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Oct 22 16:56:18 2020
-
-@author: joeyd
+@author: Joey Davis <jhdavis@mit.edu> jhdavislab.org
 """
 import warnings
 warnings.filterwarnings("ignore")
