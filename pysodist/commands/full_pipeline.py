@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sat Oct 24 14:04:54 2020
-
-@author: joeyd
+@author: Joey Davis <jhdavis@mit.edu> jhdavislab.org
 """
 
 import pysodist.commands.parse_input as parse_input
