@@ -126,6 +126,7 @@ First, we will convert a Skyline report file to a standard pysodist input format
 This input file should be a skyline report file. A new file called pd_parsed_report.tsv will be created for each sample specified.
 
 Example usage
+
     $  pysodist parse_input ./raw_data/ace_15N_pysodist_v002_trunc.csv --sample_list Ace_15N_600_DIA
     working on sample: Ace_15N_600_DIA
     reading peptides from skyline dataframe Ace_15N_600_DIA
@@ -162,6 +163,7 @@ Second, we will extract each of the individual m/z vs. intensity MS1 spectra fro
                             0.01 to 0.001. Optional, default is 0.001.
 
 Example usage
+
     $ pysodist extract_spectra ./raw_data/Ace_15N_600_DIA.mzML ./Ace_15N_600_DIA/pd_parsed_report.tsv
     reading mzml file ./raw_data/Ace_15N_600_DIA.mzML...
     total spectra in mzml: 3049
@@ -295,6 +297,7 @@ This is completely optional as all of the fitting is complete and one can inspec
                             This option forces these to not be saved.
 
 Example usage:
+
     $ pysodist plot_spectra ./Ace_15N_600_DIA/U_var387N_fix998N_isodist_outputs/U_var387N_fix998N_output.csv ./Ace_15N_600_DIA/U_var387N_fix998N_isodist_fits/ ./Ace_15N_600_DIA/final_plots --numerator AMP_U --denominator AMP_U AMP_F
 
 This will plot all of the spectra and summary plots for the entries in the compiled isodist ouptu (U_var387N_fix998N_output.csv). The plots will be saved in /final_plots and the ratio calculated will be [U/(U+F)]. Note that the interactive notebook will also be copied into the final_fits directory.
@@ -382,6 +385,7 @@ An additional command is provided to run the entire pipeline. This is helpful if
                             This option forces these to not be saved.
 
 Example usage:
+    
     $ pysodist full_pipeline ./raw_data/ace_15N_pysodist_v002.csv ./raw_data/Ace_15N_600_DIA.mzML Ace_15N_600_DIA ~/software/pysodist/fortran/isodist ./model_files/atoms.txt ./model_files/U_var387N_fix998N.txt --threads 12 --wait_time 120 --no_pdf
 
 This will work on all of the spectra corresponding to the Ace_15N_600_DIA sample that were specified in the ace_15N_pysodist_v002.csv skyline report file. It will use 12 threads for the isodist fitting, checking the threads every 2 minutes, and will not produce any .pdf plots.
