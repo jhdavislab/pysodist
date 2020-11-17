@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+"""
+@author: Joey Davis <jhdavis@mit.edu> jhdavislab.org
+"""
+
 '''Pysodist: a python distribution of the isodist mass spectra fitting routine'''
 
 def main():
