@@ -21,8 +21,8 @@ $(OBJ): $(PGM).h
 .f.o: $(FC) $(FFLAGS) %.f
 
 install:
-	cp isodist /usr/local/bin
-
+	cp isodist ../.
+	
 clean:   
 	rm isodist
 	rm *.o
