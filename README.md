@@ -14,14 +14,14 @@ The algorithm is described in 1. Utilization of a related tool can be found in 2
 
 4. Davis JH*, Tan YZ*, Carragher B, Potter CS, Lyumkis D, Williamson JR. Modular assembly of the bacterial large ribosomal subunit. Cell 2016. 167(6):1610-1622.
 
-## New in v0.0.2
-
-**Version 0.0.2:**
-* New: An interactive jupyter notebook to look at the results
-
+## New in v0.0.3
+**Version 0.0.3:**
+* New: Installation instructions provided in the README.md
 * Last updated 11/17/2020
 
 ### Previous versions
+**Version 0.0.2:**
+* New: An interactive jupyter notebook to look at the results
 
 **Version 0.0.1:**
 * A pre-release beta.
