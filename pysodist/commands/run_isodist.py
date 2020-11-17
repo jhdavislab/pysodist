@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sat Oct 24 14:07:14 2020
-
-@author: joeyd
+@author: Joey Davis <jhdavis@mit.edu> jhdavislab.org
 """
 
 import subprocess
