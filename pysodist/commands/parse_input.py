@@ -135,6 +135,8 @@ def parse_skyline(path_to_skyline_csv, output_directory, sample_list=None, prote
     output_directory = output_directory.replace('\\', '/')
     if output_directory[-1] != '/':
         output_directory+='/'
+    if not(os.path.exists(output_directory)):
+        os.mkdir(output_directory)
     skyline_complete = pd.read_csv(path_to_skyline_csv, sep=',')
     if sample_list is None:
         sample_fields = [' '.join(i.split(defs.SAMPLE_FIND_FIELD)[0].split(' ')[1:]) for i in skyline_complete.columns if defs.SAMPLE_FIND_FIELD in i]
