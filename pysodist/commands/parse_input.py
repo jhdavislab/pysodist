@@ -141,6 +141,7 @@ def parse_skyline(path_to_skyline_csv, output_directory, sample_list=None, prote
         sample_list = [i.strip() for i in set(sample_fields)]
     output_list = []
     for sample in sample_list:
+        print('working on sample: ' + sample)
         extracted_sub = extract_skyline_sub(skyline_complete, sample, protein_list=protein_list, isotope=isotope)
         output_list.append(parse_sub_skyline(extracted_sub, sample, q_value=q_value, isotope=isotope, IO=IO))
         
