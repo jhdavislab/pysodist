@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Oct 20 15:29:11 2020
-
-@author: joeyd
+@author: Joey Davis <jhdavis@mit.edu> jhdavislab.org
 """
 
 import numpy as np
