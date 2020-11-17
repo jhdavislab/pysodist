@@ -197,7 +197,7 @@ I strongly recommend a labeling scheme similar to this [species1_species2_specie
 * Fourth, set the initial guesses for the variably labeled atoms, and whether those values are 'fixed' or 'variable'
 * Fifth, ensure that each amino acid is defind correctly - the rows correspond to each of your three species (U, L, F), the columns refer to your atom times (C, H, N, O, S, NX, NY)
 
-**Note that any modified amino acids can be specified here - we have included entries for oxidized methionine and modified cysteine, but more can be added. Please contact me directly to implement additional modifications.
+* Note that any modified amino acids can be specified here - we have included entries for oxidized methionine and modified cysteine, but more can be added. Please contact me directly to implement additional modifications.
 
     $ pysodist run_isodist -h
     usage: pysodist run_isodist [-h] [--threads THREADS] [--wait_time WAIT_TIME]
