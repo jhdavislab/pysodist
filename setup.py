@@ -34,6 +34,6 @@ setuptools.setup(
         'pandas>=1.1.3',
         'numpy>=1.19.2',
         'pyteomics>=4.3.3',
-        'qrid>=1.3.1']
+        'qgrid>=1.3.1']
 
 )
