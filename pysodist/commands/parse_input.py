@@ -132,6 +132,9 @@ def parse_skyline(path_to_skyline_csv, output_directory, sample_list=None, prote
     :return: a list of pandas dataframes with no indices, columns of peptide_modified_sequence, rt_start (seconds), rt_end (seconds), charge, 
     mz of the light species, protein_IDs, peptide_start_position, peptide_end_position
     '''
+    output_directory = output_directory.replace('\\', '/')
+    if output_directory[-1] != '/':
+        output_directory+='/'
     skyline_complete = pd.read_csv(path_to_skyline_csv, sep=',')
     if sample_list is None:
         sample_fields = [' '.join(i.split(defs.SAMPLE_FIND_FIELD)[0].split(' ')[1:]) for i in skyline_complete.columns if defs.SAMPLE_FIND_FIELD in i]
