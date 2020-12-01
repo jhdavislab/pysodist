@@ -38,7 +38,7 @@ The follow operations will clone the repository to your machine and will install
     $ conda activate pysodist
 
     # Install dependencies
-    $ conda install numpy scipy pandas qgrid matplotlib seaborn jupyter pyteomics jupyterlab ipython -c bioconda
+    $ conda install numpy scipy pandas qgrid matplotlib seaborn jupyter pyteomics jupyterlab ipython notebook -c bioconda
     
     # Clone source code and install
     $ git clone https://github.com/jhdavislab/pysodist.git
