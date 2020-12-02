@@ -111,6 +111,9 @@ def parse_sub_skyline(skyline_sub_df, sample, q_value=0.00, isotope='light', IO=
     assert used_peptides == len(pep_start)
     assert used_peptides == len(pep_end)
     
+    for rt_index in range(len(rts_start)):
+        assert rts_start[rt_index] < rts_end[rt_index], print('There is a problem with the retention times for peptide: ' + peptides[rt_index] + '. It has the follwing fields as starting and ending retention times: ' + str(rts_start[rt_index]) + ', ' + str(rts_end[rt_index])
+    
     #make a dataframe with your newly calculated entries
     pandas_dataframe = pd.DataFrame({peptides[i]:
     {'peptide_modified_sequence':peptides[i], 'rt_start':rts_start[i], 'rt_end':rts_end[i], 
