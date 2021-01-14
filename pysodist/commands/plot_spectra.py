@@ -436,7 +436,7 @@ def plot_csv_stats(id_output, current_ratio_string, output_path=None, png=True, 
     return fig
 
 def add_args(parser):
-    parser.add_argument('input_file', help='path to the combiled isodist .csv file bearing all of the results (1 row per fit spectra).')
+    parser.add_argument('input_file', help='path to the compiled isodist .csv file bearing all of the results (1 row per fit spectra).')
     parser.add_argument('fit_folder', help='path to the folder containing all of the isodist .fit files.')
     parser.add_argument('output_folder', help='path to a folder to save all of the fits into. Will be created if it does not exist.')
     parser.add_argument('--numerator', nargs='+', default=['AMP_U'], help='list of the fields to use in the numerator of the abundance ratio calculation (typically AMP_U, AMP_L, AMP_F, or some combination. Default is AMP_U')
