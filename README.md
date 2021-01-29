@@ -43,7 +43,6 @@ The follow operations will clone the repository to your machine and will install
     # Clone source code and install
     $ git clone https://github.com/jhdavislab/pysodist.git
     $ cd pysodist
-    $ git checkout v0.0.3
     $ python setup.py install
 
     # Test your installation
