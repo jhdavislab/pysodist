@@ -85,26 +85,28 @@ def extract_spectra(parsed_mzml, parsed_report, output_dir,
         for current_scan_num in range(first_scan, last_scan):
             scan_data = parsed_mzml['ms1_scans'][current_scan_num]
             select_scan_data = scan_data.loc[(scan_data['mz_data'] >= mz_range[0]) & (scan_data['mz_data'] <= mz_range[1])]
+            if len(select_scan_data) < 1:
+                print('**peptide: ' + str(current_peptide) + ', scan #: ' + str(current_scan_num) + 'lacks MS1 data in apppropriate m/z range. Skipping this scan.')
+            else:
+                interpolation = interp1d(scan_data['mz_data'], scan_data['intensity_data'])
+                interp_intensity = interpolation(interp_mz_axis)
+                interp_scan_data = pd.DataFrame({'mz_data':interp_mz_axis, 'intensity_data':interp_intensity})
             
-            interpolation = interp1d(scan_data['mz_data'], scan_data['intensity_data'])
-            interp_intensity = interpolation(interp_mz_axis)
-            interp_scan_data = pd.DataFrame({'mz_data':interp_mz_axis, 'intensity_data':interp_intensity})
-            
-            interp_summed_intensity += interp_intensity
+                interp_summed_intensity += interp_intensity
 
-            if sum_spectra_only is False:
-                file_name = peptide_base_name+'_'+str(round(rt_array[current_scan_num],3))
-                spectra_string = peaks_dir+file_name+'.tsv'
-                local_spectra_string = local_peaks_dir+file_name+'.tsv'
-                if save_interp_spectra:
-                    write_scan(current_peptide, interp_scan_data, spectra_string)
-                else:
-                    write_scan(current_peptide, select_scan_data, spectra_string)
+                if sum_spectra_only is False:
+                    file_name = peptide_base_name+'_'+str(round(rt_array[current_scan_num],3))
+                    spectra_string = peaks_dir+file_name+'.tsv'
+                    local_spectra_string = local_peaks_dir+file_name+'.tsv'
+                    if save_interp_spectra:
+                        write_scan(current_peptide, interp_scan_data, spectra_string)
+                    else:
+                        write_scan(current_peptide, select_scan_data, spectra_string)
                     
-                spectra_dict[file_name] = [current_peptide['peptide_modified_sequence'], 
-                                         str(current_peptide['charge']),
-                                         local_spectra_string]
-                
+                    spectra_dict[file_name] = [current_peptide['peptide_modified_sequence'], 
+                                             str(current_peptide['charge']),
+                                          local_spectra_string]
+                   
         file_name =  peptide_base_name+'_SUM'
         spectra_string = peaks_dir+file_name+'.tsv'
         local_spectra_string = local_peaks_dir+file_name+'.tsv'
