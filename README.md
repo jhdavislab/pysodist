@@ -16,6 +16,7 @@ The algorithm is described in 1. Utilization of a related tool can be found in 2
 
 ## New in v0.0.4
 **Version 0.0.4:**
+* Imporved error reporting
 
 ## New in v0.0.3
 **Version 0.0.3:**
