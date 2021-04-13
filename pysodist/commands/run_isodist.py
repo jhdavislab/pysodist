@@ -6,11 +6,11 @@
 import subprocess
 import argparse
 import time
-import pandas as pd
 import os
 import shutil
 import glob
 import math
+import pandas as pd
 
 def wait(processes, limit, wait_time):
     while len(processes) >= limit:
