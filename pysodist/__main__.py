@@ -5,11 +5,13 @@
 
 '''Pysodist: a python distribution of the isodist mass spectra fitting routine'''
 
+
 def main():
-    import argparse, os
+    import argparse
+    import os
     parser = argparse.ArgumentParser(description=__doc__)
     import pysodist
-    parser.add_argument('--version', action='version', version='pysodist '+pysodist.__version__)
+    parser.add_argument('--version', action='version', version='pysodist ' + pysodist.__version__)
 
     import pysodist.commands.parse_input
     import pysodist.commands.extract_spectra
@@ -18,11 +20,11 @@ def main():
     import pysodist.commands.full_pipeline
 
     modules = [pysodist.commands.parse_input,
-        pysodist.commands.extract_spectra,
-        pysodist.commands.run_isodist,
-        pysodist.commands.plot_spectra,
-        pysodist.commands.full_pipeline,
-        ]
+               pysodist.commands.extract_spectra,
+               pysodist.commands.run_isodist,
+               pysodist.commands.plot_spectra,
+               pysodist.commands.full_pipeline,
+               ]
 
     subparsers = parser.add_subparsers(title='Choose a command')
     subparsers.required = 'True'
@@ -37,6 +39,7 @@ def main():
 
     args = parser.parse_args()
     args.func(args)
+
 
 if __name__ == '__main__':
     main()

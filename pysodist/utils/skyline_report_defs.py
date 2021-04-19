@@ -34,6 +34,9 @@ NORM_CALC_RATIO_MS1_FIELD = 'MS1_ratio_norm'
 NORM_CALC_RATIO_FRAG_FIELD = 'Frag_ratio_norm'
 NORM_CALC_RATIO_TOTAL_FIELD = 'Total_ratio_norm'
 
+AMPU = 'AMP_U'
+AMPF = 'AMP_F'
+
 ########################################################
 #####MASS SPEC GENERAL DEFINITIONS######################
 ########################################################
