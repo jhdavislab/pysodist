@@ -8,7 +8,7 @@ import pysodist.utils.skyline_report_defs as defs
 import argparse
 import os
 import sys
-from pysodist import utilities
+from pysodist.utils import utilities
 log = utilities.log
 vlog = utilities.vlog
 

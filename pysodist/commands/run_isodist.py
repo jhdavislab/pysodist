@@ -11,7 +11,7 @@ import os
 import shutil
 import glob
 import math
-from pysodist import utilities
+from pysodis.utils import utilities
 import tarfile
 
 log = utilities.log

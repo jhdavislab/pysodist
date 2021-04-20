@@ -12,7 +12,7 @@ import re
 import os
 import argparse
 from scipy.interpolate import interp1d
-from pysodist import utilities
+from pysodist.utils import utilities
 
 log = utilities.log
 vlog = utilities.vlog
