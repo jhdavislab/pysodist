@@ -200,7 +200,7 @@ def parse_skyline(path_to_skyline_csv, output_directory, sample_list=None, prote
             if not choice == 'y':
                 log('exiting parse_input as the desired output directory exists', logfile)
                 raise
-        log('writing result to: ' + write_directory + '/pd_parsed_report.tsv')
+        log('Writing result to: ' + write_directory + '/pd_parsed_report.tsv')
         output_list[-1].to_csv(write_directory + '/pd_parsed_report.tsv', sep='\t',
                                columns=['rt_start', 'rt_end', 'peptide_modified_sequence', 'charge',
                                         'mz', 'protein_IDs', 'start_pos', 'end_pos'], index=False)

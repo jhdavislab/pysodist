@@ -1,4 +1,4 @@
 set -e
-set - x
+set -x
 
-pysodist parse_input HFX_15Nmetabolic_test.csv --output_directory ./test_result --sample_list [Glu_15N_300_DIA] --protein_list [ADH1 SOD1 EFT1] --isotope light --logfile test_parse.log
+pysodist parse_input HFX_15Nmetabolic_test.csv --output_directory ./test_result --protein_list ENO2 TEF1 EFT1 RPL28 PAB1 ALD6 TPI1 PGK1 --logfile test_parse.log --isotope light --sample_list Glu_15N_300_DIA
