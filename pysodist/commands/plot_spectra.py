@@ -511,6 +511,8 @@ def add_args(parser):
 
 
 def main(args):
+    log('****INITIATING****', args.logfile)
+    log('executed command: ' + " ".join(sys.argv), args.logfile)
     input_file = args.input_file.replace('\\', '/')
     working_path = '/'.join(input_file.split('/')[:-2]) + '/'
     fit_folder = args.fit_folder.replace('\\', '/')

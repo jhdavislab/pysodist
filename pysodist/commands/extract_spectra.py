@@ -74,63 +74,67 @@ def extract_spectra(parsed_mzml, parsed_report, output_dir,
             raise
 
     for index, current_peptide in parsed_report_df.iterrows():
-
         first_scan = np.argmax(rt_array >= current_peptide['rt_start'])
         last_scan = np.argmax(rt_array > current_peptide['rt_end']) - 1
         mz_range = mz_window(current_peptide['peptide_modified_sequence'],
                              current_peptide['charge'], current_peptide['mz'], labeling=labeling)
 
-        log('extracting ' + str(last_scan - first_scan) + ' spectra for peptide ' + str(index) + ' : ' +
-            current_peptide['peptide_modified_sequence'], logfile)
+        if (last_scan - first_scan) < 2:
+            log('peptide ' + str(index) + ' : ' + current_peptide['peptide_modified_sequence'] +
+                'has a very narrow RT range with only ' + str(last_scan-first_scan+1) +
+                ' scans. It is being skipped.', logfile)
+        else:
+            log('extracting ' + str(last_scan - first_scan + 1) + ' spectra for peptide ' + str(index) + ' : ' +
+                current_peptide['peptide_modified_sequence'], logfile)
 
-        interp_mz_axis = np.arange(mz_range[0], mz_range[1], interp_res)
-        interp_summed_intensity = np.zeros(interp_mz_axis.shape[0])
+            interp_mz_axis = np.arange(mz_range[0], mz_range[1], interp_res)
+            interp_summed_intensity = np.zeros(interp_mz_axis.shape[0])
 
-        peptide_base_name = "_".join([current_peptide['peptide_modified_sequence'],
-                                      str(current_peptide['charge']),
-                                      str(round(current_peptide['mz'], 3)),
-                                      str(current_peptide['start_pos']) + '-' + str(current_peptide['end_pos'])])
+            peptide_base_name = "_".join([current_peptide['peptide_modified_sequence'],
+                                          str(current_peptide['charge']),
+                                          str(round(current_peptide['mz'], 3)),
+                                          str(current_peptide['start_pos']) + '-' + str(current_peptide['end_pos'])])
 
-        for current_scan_num in range(first_scan, last_scan):
-            scan_data = parsed_mzml['ms1_scans'][current_scan_num]
-            select_scan_data = scan_data.loc[
-                (scan_data['mz_data'] >= mz_range[0]) & (scan_data['mz_data'] <= mz_range[1])]
-            if len(select_scan_data) < 1:
-                log('**++** PEPTIDE: ' + str(current_peptide) + ', scan #: ' + str(
-                    current_scan_num) + 'lacks MS1 data in appropriate m/z range. Skipping this scan.', logfile)
-            else:
-                interpolation = interp1d(scan_data['mz_data'], scan_data['intensity_data'])
-                interp_intensity = interpolation(interp_mz_axis)
-                interp_scan_data = pd.DataFrame({'mz_data': interp_mz_axis, 'intensity_data': interp_intensity})
+            for current_scan_num in range(first_scan, last_scan+1):
+                scan_data = parsed_mzml['ms1_scans'][current_scan_num]
+                select_scan_data = scan_data.loc[
+                    (scan_data['mz_data'] >= mz_range[0]) & (scan_data['mz_data'] <= mz_range[1])]
+                if len(select_scan_data) < 1:
+                    log('**++** PEPTIDE: ' + str(current_peptide) + ', scan #: ' + str(
+                        current_scan_num) + 'lacks MS1 data in appropriate m/z range. Skipping this scan.', logfile)
+                else:
+                    interpolation = interp1d(scan_data['mz_data'], scan_data['intensity_data'])
+                    interp_intensity = interpolation(interp_mz_axis)
+                    interp_scan_data = pd.DataFrame({'mz_data': interp_mz_axis, 'intensity_data': interp_intensity})
 
-                interp_summed_intensity += interp_intensity
+                    interp_summed_intensity += interp_intensity
 
-                if sum_spectra_only is False:
-                    file_name = peptide_base_name + '_' + str(round(rt_array[current_scan_num], 3))
-                    spectra_string = peaks_dir + file_name + '.tsv'
-                    local_spectra_string = local_peaks_dir + file_name + '.tsv'
-                    if save_interp_spectra:
-                        write_scan(interp_scan_data, spectra_string)
-                    else:
-                        write_scan(select_scan_data, spectra_string)
+                    if sum_spectra_only is False:
+                        file_name = peptide_base_name + '_' + str(round(rt_array[current_scan_num], 3))
+                        spectra_string = peaks_dir + file_name + '.tsv'
+                        local_spectra_string = local_peaks_dir + file_name + '.tsv'
+                        if save_interp_spectra:
+                            write_scan(interp_scan_data, spectra_string)
+                        else:
+                            write_scan(select_scan_data, spectra_string)
 
-                    spectra_dict[file_name] = [current_peptide['peptide_modified_sequence'],
-                                               str(current_peptide['charge']),
-                                               local_spectra_string]
+                        spectra_dict[file_name] = [current_peptide['peptide_modified_sequence'],
+                                                   str(current_peptide['charge']),
+                                                   local_spectra_string]
 
-        file_name = peptide_base_name + '_SUM'
-        spectra_string = peaks_dir + file_name + '.tsv'
-        local_spectra_string = local_peaks_dir + file_name + '.tsv'
-        interp_summed_spectra = pd.DataFrame(
-            {'mz_data': interp_mz_axis, 'intensity_data': interp_summed_intensity / ((last_scan - first_scan) / 2)})
-        write_scan(interp_summed_spectra, spectra_string)
-        spectra_dict[file_name] = [current_peptide['peptide_modified_sequence'],
-                                   str(current_peptide['charge']),
-                                   local_spectra_string]
+            file_name = peptide_base_name + '_SUM'
+            spectra_string = peaks_dir + file_name + '.tsv'
+            local_spectra_string = local_peaks_dir + file_name + '.tsv'
+            interp_summed_spectra = pd.DataFrame(
+                {'mz_data': interp_mz_axis, 'intensity_data': interp_summed_intensity / ((last_scan - first_scan) / 2)})
+            write_scan(interp_summed_spectra, spectra_string)
+            spectra_dict[file_name] = [current_peptide['peptide_modified_sequence'],
+                                       str(current_peptide['charge']),
+                                       local_spectra_string]
 
-        spectra_df = pd.DataFrame.from_dict(spectra_dict, orient='index',
-                                            columns=['peptide_modified_sequence', 'charge', 'spectra_file'])
-        spectra_df.to_csv(output_dir + 'pd_exported_peaks.tsv', sep='\t', index=False)
+            spectra_df = pd.DataFrame.from_dict(spectra_dict, orient='index',
+                                                columns=['peptide_modified_sequence', 'charge', 'spectra_file'])
+            spectra_df.to_csv(output_dir + 'pd_exported_peaks.tsv', sep='\t', index=False)
     return pd.DataFrame.from_dict(spectra_dict, orient='index',
                                   columns=['peptide_modified_sequence', 'charge', 'spectra_file'])
 
@@ -152,7 +156,9 @@ def parse_mzml(mzml_path, pickle_data=None, logfile=None):
         rt_list = []
         log('reading mzml file ' + mzml_path + '...', logfile)
         for scan in mz_reader:
-            assert scan['ms level'] == 1
+            assert scan['ms level'] == 1, 'Your mzml file contains non-MS1 scans. ' \
+                                          'When converting your mzml file, only include MS1 scans. See the pysodist' \
+                                          'docs for how to appropriately convert to .mzml files using msconvert.'
             mz_int_pd = pd.DataFrame({'mz_data': scan['m/z array'], 'intensity_data': scan['intensity array']})
             scan_list.append(mz_int_pd)
             new_rt = float(scan['scanList']['scan'][0]['scan start time'])
@@ -163,13 +169,13 @@ def parse_mzml(mzml_path, pickle_data=None, logfile=None):
     return parsed_mz_file
 
 
-def mz_window(peptide_modified_sequence, peptide_charge, peptide_mz, labeling='N15', topomers_left=2, tomopers_right=5):
+def mz_window(peptide_modified_sequence, z, mz, labeling='N15', topomers_left=2, tomopers_right=5):
     """
     calculates the mz window required to accommodate the range of mzs  for all isotopes present in a given peptide
 
     :param peptide_modified_sequence: string of peptide amino acid sequence including modifications
-    :param peptide_charge: int of peptide charge state
-    :param peptide_mz: float of mz for the unlabeled monoisotopic peptide
+    :param z: int of peptide charge state
+    :param mz: float of mz for the unlabeled monoisotopic peptide
     :param labeling: isotope labeling method ie. "K8R10" or "N15" (default None: unlabeled)
     :param topomers_left: number of isotopomers to include in the extracted spectra to the left of the min mass
     :param tomopers_right: number of isotopomers to include in the extracted spectra to the right of the max mass
@@ -183,18 +189,16 @@ def mz_window(peptide_modified_sequence, peptide_charge, peptide_mz, labeling='N
     arg_count = sum([i for i in peptide_simple_seq if i.upper() == 'R'])
 
     if labeling == 'N15':
-        labeled_mz = ((sum([defs.AANITROGENS[i] * n14_offset for i in peptide_simple_seq])) / peptide_charge) + \
-                     peptide_mz
+        labeled_mz = ((sum([defs.AANITROGENS[i] * n14_offset for i in peptide_simple_seq])) / z) + mz
     elif labeling == 'C13':
-        labeled_mz = ((sum([defs.AACARBONS[i] * c13_offset for i in peptide_simple_seq])) / peptide_charge) + \
-                     peptide_mz
+        labeled_mz = ((sum([defs.AACARBONS[i] * c13_offset for i in peptide_simple_seq])) / z) + mz
     elif labeling == 'K8R10':
-        labeled_mz = ((lys_count * 8 + arg_count * 10) / peptide_charge) + peptide_mz
+        labeled_mz = ((lys_count * 8 + arg_count * 10) / z) + mz
     elif labeling == 'K6R6':
-        labeled_mz = ((lys_count * 6 + arg_count * 6) / peptide_charge) + peptide_mz
+        labeled_mz = ((lys_count * 6 + arg_count * 6) / z) + mz
     else:
-        labeled_mz = peptide_mz
-    return [peptide_mz - (topomers_left / peptide_charge), labeled_mz + (tomopers_right / peptide_charge)]
+        labeled_mz = mz
+    return [mz - (topomers_left / z), labeled_mz + (tomopers_right / z)]
 
 
 def add_args(parser):
@@ -215,6 +219,8 @@ def add_args(parser):
 
 
 def main(args):
+    log('****INITIATING****', args.logfile)
+    log('executed command: ' + " ".join(sys.argv), args.logfile)
     parsed_report = args.parsed_report.replace('\\', '/')
     output_dir = '/'.join(parsed_report.split('/')[:-1]) + '/'
     assert (os.path.exists(parsed_report) is True)

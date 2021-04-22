@@ -228,6 +228,8 @@ def add_args(parser):
 
 
 def main(args):
+    log('****INITIATING****', args.logfile)
+    log('executed command: ' + " ".join(sys.argv), args.logfile)
     sample_list = args.sample_list
     log(str(sys.argv), args.logfile)
     parse_skyline(args.input, sample_list=sample_list, protein_list=args.protein_list,
