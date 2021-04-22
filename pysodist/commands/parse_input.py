@@ -113,7 +113,7 @@ def parse_sub_skyline(skyline_sub_df, sample, q_value=0.00, isotope='light', log
     peptides = [rename_peptide(i) for i in filt_entries[defs.PEPTIDE_MOD_SEQ_FIELD]]
 
     pep_num_clean = len(peptides)
-    log('processing ' + str(pep_num_clean) + ' peptides.\n' + str(pep_num_all-pep_num_clean) +
+    log('processing ' + str(pep_num_clean) + ' peptides.  ' + str(pep_num_all-pep_num_clean) +
         ' other peptides were dropped due to NaN RTs', logfile)
 
     rts_start = [round(t, 2) for t in filt_entries[isotope + ' ' + sample + ' ' + defs.RT_START_FIELD]]
@@ -194,11 +194,13 @@ def parse_skyline(path_to_skyline_csv, output_directory, sample_list=None, prote
         try:
             os.mkdir(write_directory)
         except OSError:
-            print('...the output directory: ' + write_directory + ' already exists, and files within it may be '
-                                                                  'overwritten. continue? [y/n]')
+            print('++++ The output directory: ' + write_directory +
+                  ' already exists, and files within it may be overwritten. continue? [y/n]')
             choice = input().lower()
             if not choice == 'y':
+                log('exiting parse_input as the desired output directory exists', logfile)
                 raise
+        log('writing result to: ' + write_directory + '/pd_parsed_report.tsv')
         output_list[-1].to_csv(write_directory + '/pd_parsed_report.tsv', sep='\t',
                                columns=['rt_start', 'rt_end', 'peptide_modified_sequence', 'charge',
                                         'mz', 'protein_IDs', 'start_pos', 'end_pos'], index=False)
@@ -212,10 +214,10 @@ def add_args(parser):
                              'per sample in the skyline report. Default = ./')
     parser.add_argument('--sample_list', nargs='*', default=None,
                         help='An optional list of samples to parse. By default '
-                             'all samples in the report are analyzed.')
-    parser.add_argument('--protein_list', nargs='*', default=None, help='An optional list of the proteins to parse. '
-                                                                        'By default, all proteins in the report are '
-                                                                        'analyzed.')
+                             'all samples in the report are analyzed. Each sample separated by a space')
+    parser.add_argument('--protein_list', nargs='*', default=None,
+                        help='An optional list of the proteins to parse. By default, all proteins in the report are '
+                             'analyzed. Each Protein Preferred Name separated by a space.')
     parser.add_argument('--isotope', default='light', help='Be default, it is assumed that the report contains a light '
                                                            'isotope (no special labeling), if this field is not present'
                                                            'in the report, you can specify a different field here '
@@ -231,7 +233,6 @@ def main(args):
     log('****INITIATING****', args.logfile)
     log('executed command: ' + " ".join(sys.argv), args.logfile)
     sample_list = args.sample_list
-    log(str(sys.argv), args.logfile)
     parse_skyline(args.input, sample_list=sample_list, protein_list=args.protein_list,
                   isotope=args.isotope, q_value=args.q_value,
                   output_directory=args.output_directory, logfile=args.logfile)
