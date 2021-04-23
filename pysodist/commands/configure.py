@@ -52,6 +52,7 @@ def main(args):
         f.write('modelfile\t' + modelfile+'\n')
         f.write('atomfile\t' + atomfile+'\n')
         f.write('isodist_executable\t' + isodist_executable+'\n')
+    log('++++COMPLETED configure++++', args.logfile)
 
 
 if __name__ == "__main__":

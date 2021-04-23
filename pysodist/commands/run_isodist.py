@@ -21,7 +21,7 @@ vlog = utilities.vlog
 
 def wait(processes, limit, wait_time, logfile=None):
     while len(processes) >= limit:
-        log('waiting ' + str(int(wait_time / 60)) + ' minutes to check on processes...', logfile)
+        log('waiting ' + str(wait_time) + ' seconds to check on processes...', logfile)
         time.sleep(wait_time)
         processes.difference_update([
             p for p in processes if p.poll() is not None])
@@ -69,7 +69,7 @@ def cleanup(output_path, no_compress=False):
     base_name = output_path.split('/')[-1].split('_output.csv')[0]
     base_path = '/'.join(output_path.split('/')[:-1]) + '/'
 
-    isodist_dirs = ['_isodist_inputs', '_isodist_fits', '_isodist_outputs']
+    isodist_dirs = ['_isodist_inputs', '_isodist_fits', '_isodist_outputs', '_isodist_logs']
     for ex in isodist_dirs:
         try:
             os.mkdir(base_path + base_name + ex)
@@ -95,33 +95,33 @@ def cleanup(output_path, no_compress=False):
             shutil.move(f, base_path + base_name + '_isodist_logs')
     else:
         with tarfile.open(base_path + base_name + '_isodist_inputs/batch_files.tar.gz', 'x:gz') as tar:
-            for b in batch_files:
-                tar.add(b)
-                os.remove(b)
-        with tarfile.open(base_path + base_name + '_isodist_inputs/in_files.tar.gz', 'x:gz') as tar:
             for i in batch_files:
                 tar.add(i)
-                os.remove(b)
+                os.remove(i)
+        with tarfile.open(base_path + base_name + '_isodist_inputs/in_files.tar.gz', 'x:gz') as tar:
+            for i in in_files:
+                tar.add(i)
+                os.remove(i)
         with tarfile.open(base_path + base_name + 'isodist_logs/log_files.tar.gz', 'x:gz') as tar:
             for i in log_files:
                 tar.add(i)
-                os.remove(b)
+                os.remove(i)
         with tarfile.open(base_path + base_name + 'isodist_logs/err_files.tar.gz', 'x:gz') as tar:
             for i in err_files:
                 tar.add(i)
-                os.remove(b)
+                os.remove(i)
 
     dat_files = glob.glob(base_path + '*spectra/*.dat')
-    for f in dat_files:
-        os.remove(f)
+    for i in dat_files:
+        os.remove(i)
 
     fit_files = glob.glob(base_path + '*spectra/*.fit')
-    for f in fit_files:
-        shutil.move(f, base_path + base_name + '_isodist_fits')
+    for i in fit_files:
+        shutil.move(i, base_path + base_name + '_isodist_fits')
 
     csv_files = glob.glob(base_path + '*.batch.csv')
-    for f in csv_files:
-        shutil.move(f, base_path + base_name + '_isodist_outputs')
+    for i in csv_files:
+        shutil.move(i, base_path + base_name + '_isodist_outputs')
     shutil.move(output_path, base_path + base_name + '_isodist_outputs')
 
 
@@ -149,6 +149,7 @@ def compile_isodist_csvs(csv_list, output_csv_name, parsed_pysodist_input=None):
             fixed = file.read().replace(',\n', '\n')
         with open(current_csv, 'w') as file:
             file.write(fixed)
+        print(current_csv)
         parsed_csv = pd.read_csv(current_csv).drop(['tim', 'symb'], axis=1)
 
         if associate_proteins:
@@ -182,7 +183,7 @@ def write_batch(current_peptide, batch_path, spectra_string):
         to_write.write(string + '\n')
 
 
-def write_isodist_input(batch_file_path, atomfile, resfile, niter=5, sigma=100.0, B=1.0, offset=0.05, GW=0.02):
+def write_isodist_input(batch_file_path, atomfile, resfile, niter=5, sigma=100.0, B=1.0, offset=0.05, GW=0.001):
     """
     Writes an isodist input file
     :param batch_file_path: the path to the batchfile on which to base the input files
@@ -308,7 +309,7 @@ def main(args):
         assert os.path.exists(config_file), 'The provided pysodist_config file does not exist. ' \
                                             'Please check that the path provided is correct.'
         config_df = pd.read_csv(config_file, sep='\t', index_col='FIELD')
-        print(config_df)
+        log('using configuration file: ' + config_file, logfile)
         atomfile = config_df.loc['atomfile']['VALUE'].replace('\\', '/')
         modelfile = config_df.loc['modelfile']['VALUE'].replace('\\', '/')
         isodist_executable = config_df.loc['isodist_executable']['VALUE'].replace('\\', '/')
@@ -317,14 +318,12 @@ def main(args):
         modelfile = args.modelfile.replace('\\', '/')
         isodist_executable = args.isodist_executable.replace('\\', '/')
 
-    assert os.path.exists(input_file), 'The provided input_file does not exist. ' \
-                                       'Please check that the path provided is correct.'
-    assert os.path.exists(atomfile), 'The provided atomfile does not exist. ' \
-                                     'Please check that the path provided is correct.'
-    assert os.path.exists(modelfile), 'The provided resfile does not exist. Please check that the path is correct.'
-    assert os.path.exists(isodist_executable), 'The provided isodist_executable does not exist. Check the path.'
+    assert os.path.exists(input_file), 'The provided input_file: ' + input_file + ' does not exist. Please check that the path provided is correct.'
+    assert os.path.exists(atomfile), 'The provided atomfile: ' + atomfile + ' does not exist. Please check that the path provided is correct.'
+    assert os.path.exists(modelfile), 'The provided modelfile: ' + modelfile + ' does not exist. Please check that the path is correct.'
+    assert os.path.exists(isodist_executable), 'The provided isodist_executable: ' + isodist_executable + ' does not exist. Check the path.'
     if not (args.pysodist_input is None):
-        assert os.path.exists(args.pysodist_input), 'The provided pysodist input file does not exist. Check the path.'
+        assert os.path.exists(args.pysodist_input), 'The provided pysodist input file: ' + args.pysodist_input + ' does not exist. Check the path.'
 
     working_dir = '/'.join(input_file.split('/')[:-1])
     modelfile_name = modelfile.split('/')[-1].split('.txt')[0]
@@ -350,7 +349,7 @@ def main(args):
     if args.no_cleanup is False:
         log('cleaning up...', logfile)
         cleanup(output, no_compress=args.no_compress)
-
+    log('++++COMPLETED run_isodist++++', logfile)
 
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser(

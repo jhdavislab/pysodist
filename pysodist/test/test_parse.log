@@ -1,9 +1,0 @@
-2021-04-22 16:03:31 --> ****INITIATING****
-2021-04-22 16:03:31 --> executed command: /home/jhdavis/anaconda3/envs/pysodist/bin/pysodist parse_input HFX_15Nmetabolic_test.csv --output_directory ./test_result --protein_list ENO2 TEF1 EFT1 RPL28 PAB1 ALD6 TPI1 PGK1 --logfile test_parse.log --isotope light --sample_list Glu_15N_300_DIA
-2021-04-22 16:03:31 --> ['/home/jhdavis/anaconda3/envs/pysodist/bin/pysodist', 'parse_input', 'HFX_15Nmetabolic_test.csv', '--output_directory', './test_result', '--protein_list', 'ENO2', 'TEF1', 'EFT1', 'RPL28', 'PAB1', 'ALD6', 'TPI1', 'PGK1', '--logfile', 'test_parse.log', '--isotope', 'light', '--sample_list', 'Glu_15N_300_DIA']
-2021-04-22 16:03:31 --> working on sample: Glu_15N_300_DIA
-2021-04-22 16:03:31 --> reading peptides from skyline dataframe Glu_15N_300_DIA
-2021-04-22 16:03:31 --> found 10 peptides.
-2021-04-22 16:03:31 --> processing 10 peptides.
-0 other peptides were dropped due to NaN RTs
-2021-04-22 16:03:31 --> returning 10 peptides
