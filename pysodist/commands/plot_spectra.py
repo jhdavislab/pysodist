@@ -21,8 +21,10 @@ import pysodist
 import shutil
 import pysodist.utils.skyline_report_defs as defs
 from pysodist.utils import utilities
+
 log = utilities.log
 vlog = utilities.vlog
+import sys
 
 
 def parse_isodist_csv(file_path):
@@ -45,7 +47,9 @@ def parse_isodist_csv(file_path):
     for CID in all_CIDs:
         all_RTs = np.array(
             [float(i) for i in parsed_id_output[parsed_id_output['CID'] == CID]['retention_time'].values if i != 'SUM'])
+        # noinspection PyArgumentList
         min_RT = float(all_RTs.min())
+        # noinspection PyArgumentList
         max_RT = float(all_RTs.max())
         range_RT = max_RT - min_RT
         parsed_id_output.loc[parsed_id_output['CID'] == CID, 'clean_RT'] = \
@@ -222,6 +226,7 @@ def plot_single_spectra(id_row, fit_folder, working_path='./', extension='.tsv',
 
     """
     spectral_dict = read_spectra(id_row, fit_folder, working_path=working_path, extension=extension)
+    # noinspection PyTypeChecker
     fig, axes = plt.subplots(ncols=1, nrows=2, gridspec_kw={'height_ratios': [5, 1]}, figsize=fig_size, sharex=True)
     main_plot, resid_plot = plot_fit(spectral_dict, axes[0], axes[1], numerator=numerator, denominator=denominator,
                                      ignore_fields=ignore_fields, fontsize=fontsize)
@@ -357,6 +362,7 @@ def plot_ratios(related_spectra, y_label, marker_size=6, palette='winter', fig_h
     all_peptides = list(set(related_spectra['CID'].values))
     all_peptides.sort()
     num_peps = len(all_peptides)
+    # noinspection PyTypeChecker
     fig, axes = plt.subplots(nrows=1, ncols=num_peps, figsize=[fig_height * (2 * num_peps / 3), fig_height],
                              sharey=True, sharex=True)
 
@@ -488,6 +494,16 @@ def plot_csv_stats(id_output, output_path=None, png=True, pdf=False,
     return fig
 
 
+def get_current_ratio_string(num, den, isodist_output):
+    all_isodist_columns = isodist_output.columns
+    for n in num:
+        assert n in all_isodist_columns, 'provided numerator ' + n + ' not present in report_file'
+    for d in den:
+        assert d in all_isodist_columns, 'provided denominator ' + d + ' not present in report_file'
+
+    return '[' + '+'.join([n for n in num]) + ']/[' + '+'.join([d for d in den]) + ']'
+
+
 def add_args(parser):
     parser.add_argument('input_file', help='path to the compiled isodist .csv file with all results (1 row/fit).')
     parser.add_argument('fit_folder', help='path to the folder containing all of the isodist .fit files.')
@@ -526,14 +542,7 @@ def main(args):
     log('parsing isodist csv file: ' + input_file, logfile)
     isodist_output = parse_isodist_csv(input_file)
 
-    all_isodist_columns = isodist_output.columns
-    for num in args.numerator:
-        assert num in all_isodist_columns, 'provided numerator ' + num + ' not present in report_file'
-    for den in args.denominator:
-        assert den in all_isodist_columns, 'provided denominator ' + den + ' not present in report_file'
-
-    current_ratio_string = '[' + '+'.join([num for num in args.numerator]) + ']/[' + '+'.join(
-        [den for den in args.denominator]) + ']'
+    current_ratio_string = get_current_ratio_string(args.numerator, args.denominator, isodist_output)
     log('all of the following plots will use current ratio as: ' + current_ratio_string, logfile)
     isodist_output = set_current_ratio(isodist_output, numerator=args.numerator, denominator=args.denominator)
 
@@ -549,6 +558,7 @@ def main(args):
             raise
 
     log('creating jupyter notebook for interactive analysis...', logfile)
+    # noinspection PyProtectedMember
     source = f'{pysodist._ROOT}/utils/analysis_template.ipynb'
     shutil.copyfile(source, output_folder + '/analysis_template.ipynb')
 
