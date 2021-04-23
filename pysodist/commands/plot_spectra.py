@@ -419,7 +419,7 @@ def plot_all_ratios(id_output, numerator=(defs.AMPU,), denominator=(defs.AMPU, d
     for protein in protein_list:
         log('plotting abundance for protein: ' + protein, logfile)
         related_spectra = get_by_protein(id_output, protein)
-        fig = plot_ratios(related_spectra, y_label, marker_size=fig_height + 1, fig_height=fig_height)
+        fig = plot_ratios(related_spectra, y_label, fig_height=fig_height)
         fig.suptitle(protein)
         plt.tight_layout()
         if saved_output_path is not None:
