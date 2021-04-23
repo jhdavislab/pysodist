@@ -102,7 +102,7 @@ def extract_spectra(parsed_mzml, parsed_report, output_dir,
                     (scan_data['mz_data'] >= mz_range[0]) & (scan_data['mz_data'] <= mz_range[1])]
                 if len(select_scan_data) < 4:
                     log('**++** PEPTIDE: ' + str(current_peptide['peptide_modified_sequence']) + ', scan #: ' + str(
-                        current_scan_num) + 'has fewer than 4 MS1 datapoints in appropriate m/z range. Skipping this scan.', logfile)
+                        current_scan_num) + 'has fewer than 4 MS1 points in  m/z range. Skipping this scan.', logfile)
                 else:
                     interpolation = interp1d(scan_data['mz_data'], scan_data['intensity_data'])
                     interp_intensity = interpolation(interp_mz_axis)

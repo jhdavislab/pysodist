@@ -125,13 +125,14 @@ def cleanup(output_path, no_compress=False):
     shutil.move(output_path, base_path + base_name + '_isodist_outputs')
 
 
-def compile_isodist_csvs(csv_list, output_csv_name, parsed_pysodist_input=None):
+def compile_isodist_csvs(csv_list, output_csv_name, parsed_pysodist_input=None, logfile=None):
     """ Function to compile and format the individual isodist csvs into a single complete csv file.
     :param csv_list: list of the full paths to the individual .csv files
     :param parsed_pysodist_input: tsv file that was used to extract spectra -
     useful in providing additional info such as protein name for each peptide.
     :param output_csv_name: string with the full path of the resulting .csv file
     (this will be compiled from the individual isodist runs)
+    :param logfile: path to file to log
 
     :return: a pandas dataframe with all of the final fit params from all of the isodist runs.
     """
@@ -149,7 +150,6 @@ def compile_isodist_csvs(csv_list, output_csv_name, parsed_pysodist_input=None):
             fixed = file.read().replace(',\n', '\n')
         with open(current_csv, 'w') as file:
             file.write(fixed)
-        print(current_csv)
         parsed_csv = pd.read_csv(current_csv).drop(['tim', 'symb'], axis=1)
 
         if associate_proteins:
@@ -163,6 +163,7 @@ def compile_isodist_csvs(csv_list, output_csv_name, parsed_pysodist_input=None):
     compiled_pd = pd.concat(pd_list, ignore_index=True)
     compiled_pd.rename(columns=lambda x: x.strip(), inplace=True)
     compiled_pd.to_csv(output_csv_name, index=False)
+    log('compiled ' + str(len(csv_list) + ' batch csvs into: ' + output_csv_name, logfile)
     return compiled_pd
 
 
@@ -345,7 +346,7 @@ def main(args):
 
     csv_list = run_fortran_isodist(in_file_list, isodist_executable,
                                    threads=args.threads, wait_time=args.wait_time, logfile=logfile)
-    compile_isodist_csvs(csv_list, output, parsed_pysodist_input=args.pysodist_input)
+    compile_isodist_csvs(csv_list, output, parsed_pysodist_input=args.pysodist_input, logfile=logfile)
     if args.no_cleanup is False:
         log('cleaning up...', logfile)
         cleanup(output, no_compress=args.no_compress)
