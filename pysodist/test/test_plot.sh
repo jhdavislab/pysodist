@@ -1,4 +1,4 @@
 set -e
 set -x
 
-pysodist plot_spectra HFX_15Nmetabolic_test.csv --output_directory ./test_result/raw_spec --protein_list ENO2 TEF1 EFT1 RPL28 PAB1 ALD6 TPI1 PGK1 --logfile test_parse.log --isotope light --sample_list Glu_15N_300_DIA
+pysodist plot_spectra ./test_result/raw_spec/Glu_15N_300_DIA/U_var500N_fix998N_isodist_outputs/U_var500N_fix998N_output.csv ./test_result/raw_spec/Glu_15N_300_DIA/U_var500N_fix998N_isodist_fits ./test_result/raw_spec/Glu_15N_300_DIA/U_var500N_fix998N_plots --no_pdf --logfile ./test_plot_raw.log

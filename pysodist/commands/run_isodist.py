@@ -297,7 +297,7 @@ def add_args(parser):
 
 def main(args):
     logfile = args.logfile
-    log('****INITIATING****', logfile)
+    log('\n****INITIATING****', logfile)
     log('executed command: ' + " ".join(sys.argv), logfile)
 
     input_file = args.input_file.replace('\\', '/')
@@ -352,7 +352,7 @@ def main(args):
     if args.no_cleanup is False:
         log('cleaning up...', logfile)
         cleanup(output, no_compress=args.no_compress)
-    log('++++COMPLETED run_isodist++++', logfile)
+    log('++++COMPLETED run_isodist++++\n', logfile)
 
 
 if __name__ == "__main__":

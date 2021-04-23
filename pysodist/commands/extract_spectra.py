@@ -222,7 +222,7 @@ def add_args(parser):
 
 
 def main(args):
-    log('****INITIATING****', args.logfile)
+    log('\n****INITIATING****', args.logfile)
     log('executed command: ' + " ".join(sys.argv), args.logfile)
     parsed_report = args.parsed_report.replace('\\', '/')
     output_dir = '/'.join(parsed_report.split('/')[:-1]) + '/'
@@ -232,7 +232,7 @@ def main(args):
     extract_spectra(parsed_mzml, args.parsed_report, output_dir,
                     labeling=args.labeling, save_interp_spectra=args.interp_only,
                     interp_res=args.interp_res, sum_spectra_only=args.sum_only)
-    log('++++COMPLETED extract_spectra++++', args.logfile)
+    log('++++COMPLETED extract_spectra++++\n\n', args.logfile)
 
 
 if __name__ == "__main__":

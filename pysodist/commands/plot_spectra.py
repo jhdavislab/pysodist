@@ -339,7 +339,7 @@ def get_by_protein(id_output, protein_name):
     return id_output[id_output['protein'].str.contains(protein_name)]
 
 
-def plot_ratios(related_spectra, y_label, marker_size=6, palette='winter', fig_height=4):
+def plot_ratios(related_spectra, y_label, palette='winter', fig_height=4):
     """
     Plots a single axis with a series of related spectra - typically all of the spectra for a given protein.
     They are broken into groups based on the peptide field, and the y-value is whatever is in "current_ratio";
@@ -349,7 +349,6 @@ def plot_ratios(related_spectra, y_label, marker_size=6, palette='winter', fig_h
     ----------
     related_spectra :  a pandas dataframe with the subset of related spectral rows.
     y_label : a string describing what the current ratio field is reporting.
-    marker_size : float, optional. The default is 6.
     palette : string, optional string for the color pallet to use along the peak position. The default is 'winter'.
     fig_height : float wit with the figure height to plot. Default=4.
 
@@ -373,14 +372,14 @@ def plot_ratios(related_spectra, y_label, marker_size=6, palette='winter', fig_h
             current_axis = axes
         peptides_df = related_spectra[related_spectra['CID'] == peptide]
         current_axis = sns.scatterplot(data=peptides_df, x='peak_position', y='current_ratio', hue='peak_position',
-                                       ax=current_axis, palette=palette, markersize=marker_size)
+                                       ax=current_axis, palette=palette)
         current_axis.set_xlabel(peptide)
         current_axis.get_legend().remove()
         current_axis.set_ylabel(y_label)
     # sns.swarmplot(x='pep', y='current_ratio', hue='peak_position', data=related_spectra,
-    #              dodge=True, size=marker_size, ax=axis, palette=palette) #TOO SLOW
+    #              dodge=True, ax=axis, palette=palette) #TOO SLOW
     # sns.stripplot(x='pep', y='current_ratio', hue='peak_position', data=related_spectra,
-    #              dodge=True, size=marker_size, ax=axis, palette=palette) #TOO SLOW
+    #              dodge=True, ax=axis, palette=palette) #TOO SLOW
     # sns.boxplot(x='pep', y='current_ratio', data=related_spectra, ax=axis, color='w')
     # sns.violinplot(x='pep', y='current_ratio', data=related_spectra, innter=None, ax=axis)
     return fig
@@ -527,7 +526,7 @@ def add_args(parser):
 
 
 def main(args):
-    log('****INITIATING****', args.logfile)
+    log('\n****INITIATING****', args.logfile)
     log('executed command: ' + " ".join(sys.argv), args.logfile)
     input_file = args.input_file.replace('\\', '/')
     working_path = '/'.join(input_file.split('/')[:-2]) + '/'
@@ -584,6 +583,7 @@ def main(args):
     log('plotting the csv stat histograms...', logfile)
     plot_csv_stats(isodist_output, output_path=output_folder, png=not args.no_png,
                    pdf=not args.no_pdf)
+    log('++++COMPLETED plot_spectra++++\n\n', args.logfile)
 
 
 if __name__ == "__main__":
