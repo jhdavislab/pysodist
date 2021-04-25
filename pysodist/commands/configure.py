@@ -2,6 +2,7 @@ import argparse
 import sys
 from os import path
 from pysodist.utils import utilities
+import pysodist
 
 log = utilities.log
 vlog = utilities.vlog
