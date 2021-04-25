@@ -30,17 +30,22 @@ def main(args):
     ms1_res = float(input().replace(',', ''))
     print('>> Please enter the expected chromatographic peak width (FWHM) in seconds for a typical peptide (e.g. 10)')
     peak_width = float(input())
-    print('>> Please enter the absolute path to the isodist labeling file you would like to use.')
+    # noinspection PyProtectedMember
+    pysodist_root = f'{pysodist._ROOT}'
+    print('>> Please enter the absolute path to the isodist labeling file you would like to use.'
+          'e.g. ' + pysodist_root + '/model_files/U_var500N_fix998N.txt')
     modelfile = input().replace('\\', '/')
     while not path.exists(modelfile):
         print('>> I could not find this file, please try entering the path again (and check for upper/lower case).')
         modelfile = input().replace('\\', '/')
-    print('>> Please enter the absolute path to the isodist atom file you would like to use.')
+    print('>> Please enter the absolute path to the isodist atom file you would like to use.'
+          'e.g. ' + pysodist_root + '/model_files/atoms.txt')
     atomfile = input().replace('\\', '/')
     while not path.exists(atomfile):
         print('>> I could not find this file, please try entering the path again (and check for upper/lower case).')
         atomfile = input().replace('\\', '/')
-    print('>> Please enter the absolute path to the isodist executable you would like to use.')
+    print('>> Please enter the absolute path to the isodist executable you would like to use.'
+          'e.g. ' + pysodist_root + '/fortran/isodist')
     isodist_executable = input().replace('\\', '/')
     while not path.exists(isodist_executable):
         print('>> I could not find this file, please try entering the path again (and check for upper/lower case).')
