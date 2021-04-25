@@ -102,7 +102,7 @@ def extract_spectra(parsed_mzml, parsed_report, output_dir,
                     (scan_data['mz_data'] >= mz_range[0]) & (scan_data['mz_data'] <= mz_range[1])]
                 if len(select_scan_data) < 4:
                     log('**++** PEPTIDE: ' + str(current_peptide['peptide_modified_sequence']) + ', scan #: ' + str(
-                        current_scan_num) + 'has fewer than 4 MS1 datapoints in appropriate m/z range. Skipping this scan.', logfile)
+                        current_scan_num) + 'has fewer than 4 MS1 points in  m/z range. Skipping this scan.', logfile)
                 else:
                     interpolation = interp1d(scan_data['mz_data'], scan_data['intensity_data'])
                     interp_intensity = interpolation(interp_mz_axis)
@@ -222,7 +222,7 @@ def add_args(parser):
 
 
 def main(args):
-    log('****INITIATING****', args.logfile)
+    log('\n****INITIATING****', args.logfile)
     log('executed command: ' + " ".join(sys.argv), args.logfile)
     parsed_report = args.parsed_report.replace('\\', '/')
     output_dir = '/'.join(parsed_report.split('/')[:-1]) + '/'
@@ -232,7 +232,7 @@ def main(args):
     extract_spectra(parsed_mzml, args.parsed_report, output_dir,
                     labeling=args.labeling, save_interp_spectra=args.interp_only,
                     interp_res=args.interp_res, sum_spectra_only=args.sum_only)
-    log('++++COMPLETED extract_spectra++++', args.logfile)
+    log('++++COMPLETED extract_spectra++++\n\n', args.logfile)
 
 
 if __name__ == "__main__":

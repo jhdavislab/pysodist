@@ -232,13 +232,13 @@ def add_args(parser):
 
 
 def main(args):
-    log('****INITIATING****', args.logfile)
+    log('\n****INITIATING****', args.logfile)
     log('executed command: ' + " ".join(sys.argv), args.logfile)
     sample_list = args.sample_list
     parse_skyline(args.input, sample_list=sample_list, protein_list=args.protein_list,
                   isotope=args.isotope, q_value=args.q_value,
                   output_directory=args.output_directory, logfile=args.logfile)
-    log('++++COMPLETED parse_input++++', args.logfile)
+    log('++++COMPLETED parse_input++++\n\n', args.logfile)
 
 
 if __name__ == "__main__":

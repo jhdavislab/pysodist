@@ -110,13 +110,7 @@ def main(args):
     print('parsing isodist csv file: '+isodist_output_csv)
     isodist_output_pd = plot_spectra.parse_isodist_csv(isodist_output_csv)
 
-    all_isodist_columns = isodist_output_pd.columns
-    for num in args.numerator:
-        assert num in all_isodist_columns, 'provided numerator '+num+' not present in report_file'
-    for den in args.denominator:
-        assert den in all_isodist_columns, 'provided denominator '+den+' not present in report_file'
-    
-    current_ratio_string = '['+'+'.join([num for num in args.numerator])+']/['+'+'.join([den for den in args.denominator])+']'
+    current_ratio_string = plot_spectra.get_current_ratio_string(args.numerator, args.denominator, isodist_output_pd)
     print('all of the following plots will use current ratio as: '+current_ratio_string)
     isodist_output_pd = plot_spectra.set_current_ratio(isodist_output_pd, numerator=args.numerator, denominator=args.denominator)
     
