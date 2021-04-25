@@ -77,10 +77,11 @@ def extract_spectra(parsed_mzml, parsed_report, output_dir,
     for index, current_peptide in parsed_report_df.iterrows():
         first_scan = np.argmax(rt_array >= current_peptide['rt_start'])
         last_scan = np.argmax(rt_array > current_peptide['rt_end']) - 1
+        total_scans = last_scan-first_scan+1
         mz_range = mz_window(current_peptide['peptide_modified_sequence'],
                              current_peptide['charge'], current_peptide['mz'], labeling=labeling)
 
-        if (last_scan - first_scan) < 2:
+        if total_scans < 3:
             log('peptide ' + str(index) + ' : ' + current_peptide['peptide_modified_sequence'] +
                 'has a very narrow RT range with only ' + str(last_scan-first_scan+1) +
                 ' scans. It is being skipped.', logfile)
@@ -127,7 +128,7 @@ def extract_spectra(parsed_mzml, parsed_report, output_dir,
             spectra_string = peaks_dir + file_name + '.tsv'
             local_spectra_string = local_peaks_dir + file_name + '.tsv'
             interp_summed_spectra = pd.DataFrame(
-                {'mz_data': interp_mz_axis, 'intensity_data': interp_summed_intensity / ((last_scan - first_scan) / 2)})
+                {'mz_data': interp_mz_axis, 'intensity_data': (interp_summed_intensity/total_scans)})
             write_scan(interp_summed_spectra, spectra_string)
             spectra_dict[file_name] = [current_peptide['peptide_modified_sequence'],
                                        str(current_peptide['charge']),
