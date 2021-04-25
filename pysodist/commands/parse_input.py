@@ -58,7 +58,7 @@ def extract_skyline_sub(full_dataframe, sample, protein_list=None, isotope='ligh
     """
     required_cols = [isotope + ' ' + sample + ' ' + defs.RT_START_FIELD,
                      isotope + ' ' + sample + ' ' + defs.RT_END_FIELD,
-                     defs.PROTEIN_GENE,
+                     defs.PROTEIN_GENE_FIELD,
                      defs.PEPTIDE_MOD_SEQ_FIELD,
                      isotope + ' ' + defs.MZ_FIELD,
                      defs.PEPTIDE_CHARGE_FIELD,
@@ -69,7 +69,7 @@ def extract_skyline_sub(full_dataframe, sample, protein_list=None, isotope='ligh
     assert required_cols[
                0] in full_dataframe.columns, 'the provided sample is likely not present. Check the sample name.'
     if not (protein_list is None):
-        new_data_frame = new_data_frame[new_data_frame[defs.PROTEIN_GENE].isin(protein_list)]
+        new_data_frame = new_data_frame[new_data_frame[defs.PROTEIN_GENE_FIELD].isin(protein_list)]
     return new_data_frame
 
 
