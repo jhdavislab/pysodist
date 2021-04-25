@@ -31,33 +31,31 @@ def main(args):
     ms1_res = float(input().replace(',', ''))
     print('>> Please enter the expected chromatographic peak width (FWHM) in seconds for a typical peptide (e.g. 10)')
     peak_width = float(input())
-    # noinspection PyProtectedMember
-    pysodist_root = f'{pysodist._ROOT}'
     print('>> Please enter the absolute path to the isodist labeling file you would like to use.'
-          'e.g. ' + pysodist_root + '/model_files/U_var500N_fix998N.txt')
+          'e.g. /home/jhdavis/dev/pysodist/model_files/U_var500N_fix998N.txt')
     modelfile = input().replace('\\', '/')
     while not path.exists(modelfile):
         print('>> I could not find this file, please try entering the path again (and check for upper/lower case).')
         modelfile = input().replace('\\', '/')
     print('>> Please enter the absolute path to the isodist atom file you would like to use.'
-          'e.g. ' + pysodist_root + '/model_files/atoms.txt')
+          'e.g. /home/jhdavis/dev/pysodist/model_files/atoms.txt')
     atomfile = input().replace('\\', '/')
     while not path.exists(atomfile):
         print('>> I could not find this file, please try entering the path again (and check for upper/lower case).')
         atomfile = input().replace('\\', '/')
     print('>> Please enter the absolute path to the isodist executable you would like to use.'
-          'e.g. ' + pysodist_root + '/fortran/isodist')
+          'e.g. /home/jhdavis/dev/pysodist/fortran/isodist')
     isodist_executable = input().replace('\\', '/')
     while not path.exists(isodist_executable):
         print('>> I could not find this file, please try entering the path again (and check for upper/lower case).')
         isodist_executable = input().replace('\\', '/')
     with open(args.output, 'w') as f:
         f.write('FIELD\tVALUE\n')
-        f.write('resolution\t' + str(ms1_res)+'\n')
-        f.write('peak_width\t' + str(peak_width)+'\n')
-        f.write('modelfile\t' + modelfile+'\n')
-        f.write('atomfile\t' + atomfile+'\n')
-        f.write('isodist_executable\t' + isodist_executable+'\n')
+        f.write('resolution\t' + str(ms1_res) + '\n')
+        f.write('peak_width\t' + str(peak_width) + '\n')
+        f.write('modelfile\t' + modelfile + '\n')
+        f.write('atomfile\t' + atomfile + '\n')
+        f.write('isodist_executable\t' + isodist_executable + '\n')
     log('\n++++COMPLETED configure++++', args.logfile)
 
 
