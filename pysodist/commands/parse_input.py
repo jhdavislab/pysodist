@@ -9,6 +9,7 @@ import argparse
 import os
 import sys
 from pysodist.utils import utilities
+
 log = utilities.log
 vlog = utilities.vlog
 
@@ -22,7 +23,7 @@ format requires the following fields for each peptide:
     * peptide_modified_sequence (this should include the full monoisotopic mod names e.g. C[+57.021464])
     * charge
     * mz (this is for the unlabeled species)
-    * protein_IDs (for skyline, this will typically be the Protein Preferred Name)
+    * protein_IDs (for skyline, this will typically be the Protein Gene Name)
     * peptide_start_position (AA number of the peptide start)
     * peptide_end_position (AA number of the peptide end)
 '''
@@ -57,7 +58,7 @@ def extract_skyline_sub(full_dataframe, sample, protein_list=None, isotope='ligh
     """
     required_cols = [isotope + ' ' + sample + ' ' + defs.RT_START_FIELD,
                      isotope + ' ' + sample + ' ' + defs.RT_END_FIELD,
-                     defs.PROTEIN_PREFERRED_NAME_FIELD,
+                     defs.PROTEIN_GENE,
                      defs.PEPTIDE_MOD_SEQ_FIELD,
                      isotope + ' ' + defs.MZ_FIELD,
                      defs.PEPTIDE_CHARGE_FIELD,
@@ -68,7 +69,7 @@ def extract_skyline_sub(full_dataframe, sample, protein_list=None, isotope='ligh
     assert required_cols[
                0] in full_dataframe.columns, 'the provided sample is likely not present. Check the sample name.'
     if not (protein_list is None):
-        new_data_frame = new_data_frame[new_data_frame[defs.PROTEIN_PREFERRED_NAME_FIELD].isin(protein_list)]
+        new_data_frame = new_data_frame[new_data_frame[defs.PROTEIN_GENE].isin(protein_list)]
     return new_data_frame
 
 
@@ -105,7 +106,7 @@ def parse_sub_skyline(skyline_sub_df, sample, q_value=0.00, isotope='light', log
 
     all_columns = filt_entries.columns
     key_columns = all_columns[(all_columns.str.contains(defs.RT_START_FIELD) |
-                              all_columns.str.contains(defs.RT_END_FIELD))]
+                               all_columns.str.contains(defs.RT_END_FIELD))]
     pep_num_all = filt_entries.shape[0]
     log('found ' + str(pep_num_all) + ' peptides.', logfile)
 
@@ -113,13 +114,14 @@ def parse_sub_skyline(skyline_sub_df, sample, q_value=0.00, isotope='light', log
     peptides = [rename_peptide(i) for i in filt_entries[defs.PEPTIDE_MOD_SEQ_FIELD]]
 
     pep_num_clean = len(peptides)
-    log('processing ' + str(pep_num_clean) + ' peptides.  ' + str(pep_num_all-pep_num_clean) +
+    assert pep_num_clean > 0, "After filtering there were no peptides, aborting. Check your skyline output file."
+    log('processing ' + str(pep_num_clean) + ' peptides.  ' + str(pep_num_all - pep_num_clean) +
         ' other peptides were dropped due to NaN RTs', logfile)
 
     rts_start = [round(t, 2) for t in filt_entries[isotope + ' ' + sample + ' ' + defs.RT_START_FIELD]]
     rts_end = [round(t, 2) for t in filt_entries[isotope + ' ' + sample + ' ' + defs.RT_END_FIELD]]
     zs = [i for i in filt_entries[defs.PEPTIDE_CHARGE_FIELD]]
-    prot_names = [i for i in filt_entries[defs.PROTEIN_PREFERRED_NAME_FIELD]]
+    prot_names = [i for i in filt_entries[defs.PROTEIN_GENE_FIELD]]
     mzs = [mz for mz in filt_entries[isotope + ' ' + defs.ISOTOPE_FIND_FIELD]]
     pep_start = [map_int(start_res) for start_res in filt_entries[defs.START_POS_FIELD]]
     pep_end = [map_int(end_res) for end_res in filt_entries[defs.END_POS_FIELD]]
@@ -163,7 +165,7 @@ def parse_skyline(path_to_skyline_csv, output_directory, sample_list=None, prote
     :param output_directory: string with the directory where the output .csv files should be saved
     :param sample_list:  list of strings of individual sample identifiers in skyline report (default None results in
     analysis of all samples)
-    :param protein_list: string of protein_preferred_name identifier for particular proteins of interest (default None
+    :param protein_list: string of protein_gene_field identifier for particular proteins of interest (default None
     includes all proteins)
     :param isotope: string for filtering output dataframe such that columns from a particular isotope type are included
     (default 'light')
@@ -217,7 +219,7 @@ def add_args(parser):
                              'all samples in the report are analyzed. Each sample separated by a space')
     parser.add_argument('--protein_list', nargs='*', default=None,
                         help='An optional list of the proteins to parse. By default, all proteins in the report are '
-                             'analyzed. Each Protein Preferred Name separated by a space.')
+                             'analyzed. Each Protein Gene Name separated by a space.')
     parser.add_argument('--isotope', default='light', help='Be default, it is assumed that the report contains a light '
                                                            'isotope (no special labeling), if this field is not present'
                                                            'in the report, you can specify a different field here '
