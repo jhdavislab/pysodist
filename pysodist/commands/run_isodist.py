@@ -102,11 +102,11 @@ def cleanup(output_path, no_compress=False):
             for i in in_files:
                 tar.add(i)
                 os.remove(i)
-        with tarfile.open(base_path + base_name + 'isodist_logs/log_files.tar.gz', 'x:gz') as tar:
+        with tarfile.open(base_path + base_name + '_isodist_logs/log_files.tar.gz', 'x:gz') as tar:
             for i in log_files:
                 tar.add(i)
                 os.remove(i)
-        with tarfile.open(base_path + base_name + 'isodist_logs/err_files.tar.gz', 'x:gz') as tar:
+        with tarfile.open(base_path + base_name + '_isodist_logs/err_files.tar.gz', 'x:gz') as tar:
             for i in err_files:
                 tar.add(i)
                 os.remove(i)
@@ -153,8 +153,11 @@ def compile_isodist_csvs(csv_list, output_csv_name, parsed_pysodist_input=None, 
         parsed_csv = pd.read_csv(current_csv).drop(['tim', 'symb'], axis=1)
 
         if associate_proteins:
+            print('&&&&'+current_csv)
             for row in range(parsed_csv.shape[0]):
                 current_peptide = parsed_csv.loc[row, 'pep']
+                print('&&&&'+current_peptide)
+                print(parsed_tsv)
                 associated_protein = \
                     parsed_tsv[parsed_tsv['peptide_modified_sequence'] == current_peptide]['protein_IDs'].values[0]
                 parsed_csv.loc[row, 'protein'] = associated_protein
@@ -352,7 +355,7 @@ def main(args):
     if args.no_cleanup is False:
         log('cleaning up...', logfile)
         cleanup(output, no_compress=args.no_compress)
-    log('++++COMPLETED run_isodist++++\n', logfile)
+    log('\n++++COMPLETED run_isodist++++\n', logfile)
 
 
 if __name__ == "__main__":

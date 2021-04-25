@@ -232,7 +232,7 @@ def main(args):
     extract_spectra(parsed_mzml, args.parsed_report, output_dir,
                     labeling=args.labeling, save_interp_spectra=args.interp_only,
                     interp_res=args.interp_res, sum_spectra_only=args.sum_only)
-    log('++++COMPLETED extract_spectra++++\n\n', args.logfile)
+    log('\n++++COMPLETED extract_spectra++++\n\n', args.logfile)
 
 
 if __name__ == "__main__":

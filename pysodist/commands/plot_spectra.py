@@ -27,11 +27,12 @@ vlog = utilities.vlog
 import sys
 
 
-def parse_isodist_csv(file_path):
+def parse_isodist_csv(file_path, logfile=None):
     """
     Parse an isodist csv output file, and save it as a pandas dataframe
 
     :param file_path: the full path to the output csv file
+    :param logfile: path to file to logfile
 
     returns: a pandas dataframe with appropriate fields updated.
     """
@@ -47,15 +48,18 @@ def parse_isodist_csv(file_path):
     for CID in all_CIDs:
         all_RTs = np.array(
             [float(i) for i in parsed_id_output[parsed_id_output['CID'] == CID]['retention_time'].values if i != 'SUM'])
-        # noinspection PyArgumentList
-        min_RT = float(all_RTs.min())
-        # noinspection PyArgumentList
-        max_RT = float(all_RTs.max())
-        range_RT = max_RT - min_RT
-        parsed_id_output.loc[parsed_id_output['CID'] == CID, 'clean_RT'] = \
-            parsed_id_output[parsed_id_output['CID'] == CID]['retention_time'].str.replace('SUM', str(max_RT + 0.01))
-        parsed_id_output.loc[parsed_id_output['CID'] == CID, 'peak_position'] = \
-            (parsed_id_output[parsed_id_output['CID'] == CID]['clean_RT'].astype(float) - min_RT) / range_RT
+        if all_RTs.shape[0]==0:
+            log('Only summed spectra present, no RT info/peak shapes reported', logfile=logfile)
+            parsed_id_output.loc[parsed_id_output['CID'] == CID, 'peak_position'] = 0.5
+            parsed_id_output.loc[parsed_id_output['CID'] == CID, 'clean_RT'] = 0.0
+        else:
+            min_RT = float(all_RTs.min())
+            max_RT = float(all_RTs.max())
+            range_RT = max_RT - min_RT
+            parsed_id_output.loc[parsed_id_output['CID'] == CID, 'clean_RT'] = \
+                parsed_id_output[parsed_id_output['CID'] == CID]['retention_time'].str.replace('SUM', str(max_RT + 0.01))
+            parsed_id_output.loc[parsed_id_output['CID'] == CID, 'peak_position'] = \
+                (parsed_id_output[parsed_id_output['CID'] == CID]['clean_RT'].astype(float) - min_RT) / range_RT
 
     return parsed_id_output
 
@@ -539,7 +543,7 @@ def main(args):
         output_folder += '/'
 
     log('parsing isodist csv file: ' + input_file, logfile)
-    isodist_output = parse_isodist_csv(input_file)
+    isodist_output = parse_isodist_csv(input_file, logfile)
 
     current_ratio_string = get_current_ratio_string(args.numerator, args.denominator, isodist_output)
     log('all of the following plots will use current ratio as: ' + current_ratio_string, logfile)
@@ -583,7 +587,7 @@ def main(args):
     log('plotting the csv stat histograms...', logfile)
     plot_csv_stats(isodist_output, output_path=output_folder, png=not args.no_png,
                    pdf=not args.no_pdf)
-    log('++++COMPLETED plot_spectra++++\n\n', args.logfile)
+    log('\n++++COMPLETED plot_spectra++++\n\n', args.logfile)
 
 
 if __name__ == "__main__":
