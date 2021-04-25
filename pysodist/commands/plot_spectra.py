@@ -48,8 +48,8 @@ def parse_isodist_csv(file_path, logfile=None):
     for CID in all_CIDs:
         all_RTs = np.array(
             [float(i) for i in parsed_id_output[parsed_id_output['CID'] == CID]['retention_time'].values if i != 'SUM'])
-        if all_RTs.shape[0]==0:
-            log('Only summed spectra present, no RT info/peak shapes reported', logfile=logfile)
+        if all_RTs.shape[0] == 0:
+            log('Only summed spectra present, no RT info/peak shapes reported', logfile)
             parsed_id_output.loc[parsed_id_output['CID'] == CID, 'peak_position'] = 0.5
             parsed_id_output.loc[parsed_id_output['CID'] == CID, 'clean_RT'] = 0.0
         else:
@@ -57,7 +57,8 @@ def parse_isodist_csv(file_path, logfile=None):
             max_RT = float(all_RTs.max())
             range_RT = max_RT - min_RT
             parsed_id_output.loc[parsed_id_output['CID'] == CID, 'clean_RT'] = \
-                parsed_id_output[parsed_id_output['CID'] == CID]['retention_time'].str.replace('SUM', str(max_RT + 0.01))
+                parsed_id_output[parsed_id_output['CID'] == CID]['retention_time'].str.replace('SUM',
+                                                                                               str(max_RT + 0.01))
             parsed_id_output.loc[parsed_id_output['CID'] == CID, 'peak_position'] = \
                 (parsed_id_output[parsed_id_output['CID'] == CID]['clean_RT'].astype(float) - min_RT) / range_RT
 
