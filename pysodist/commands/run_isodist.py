@@ -159,8 +159,10 @@ def compile_isodist_csvs(csv_list, output_csv_name, parsed_pysodist_input=None, 
                 print('&&&&'+current_peptide)
                 print(parsed_tsv)
                 associated_protein = \
-                    parsed_tsv[parsed_tsv['peptide_modified_sequence'] == current_peptide]['protein_IDs'].values[0]
-                parsed_csv.loc[row, 'protein'] = associated_protein
+                    parsed_tsv[parsed_tsv['peptide_modified_sequence'] == current_peptide]['protein_IDs'].values
+                assert associated_protein.shape > 0, \
+                    current_peptide + ' not found in pd_parsed_report. Check this file.'
+                parsed_csv.loc[row, 'protein'] = associated_protein[0]
         pd_list.append(parsed_csv)
 
     compiled_pd = pd.concat(pd_list, ignore_index=True)
