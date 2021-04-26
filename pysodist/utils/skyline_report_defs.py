@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 @author: Joey Davis <jhdavis@mit.edu> jhdavislab.org
+@version: 0.0.4
 """
 
 import pandas as pd
@@ -11,6 +12,7 @@ EXPECTED_REPORT_VERSION = 'davis_peptide_quant_v2'
 ISOTOPE_FIND_FIELD = 'Precursor Mz'
 SAMPLE_FIND_FIELD = 'Min Start Time'
 PROTEIN_PREFERRED_NAME_FIELD = 'Protein Preferred Name'
+PROTEIN_GENE_FIELD = 'Protein Gene'
 PEPTIDE_MOD_SEQ_FIELD = 'Peptide Modified Sequence Monoisotopic Masses'
 PEPTIDE_CHARGE_FIELD = 'Precursor Charge'
 DETECT_Q_VALUE_FIELD = 'Detection Q Value'
@@ -33,6 +35,9 @@ ANY_RATIO_FIELD = '_ratio'
 NORM_CALC_RATIO_MS1_FIELD = 'MS1_ratio_norm'
 NORM_CALC_RATIO_FRAG_FIELD = 'Frag_ratio_norm'
 NORM_CALC_RATIO_TOTAL_FIELD = 'Total_ratio_norm'
+
+AMPU = 'AMP_U'
+AMPF = 'AMP_F'
 
 ########################################################
 #####MASS SPEC GENERAL DEFINITIONS######################

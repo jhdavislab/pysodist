@@ -6,8 +6,8 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="pysodist", # Replace with your own username
-    version="0.0.2",
+    name="pysodist",
+    version="0.0.4",
     author="Joey Davis",
     author_email="jhdavis@mit.edu",
     description="A python-based implementation of the isodist fitting routines",
@@ -23,9 +23,9 @@ setuptools.setup(
     entry_points={
         'console_scripts': [
             'pysodist = pysodist.__main__:main',
-            ],
-        },
-    include_package_data = True,
+        ],
+    },
+    include_package_data=True,
     python_requires='>=3.6',
     install_requires=[
         'matplotlib>=3.3.2',
