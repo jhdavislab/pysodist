@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 @author: Joey Davis <jhdavis@mit.edu> jhdavislab.org
+@version: 0.0.4
 """
+
 import warnings
 
 warnings.filterwarnings("ignore")
@@ -485,7 +487,7 @@ def plot_csv_stats(id_output, output_path=None, png=True, pdf=False,
         sns.histplot(id_output, x=field, ax=axes[row, 0], bins=bins)
         sns.histplot(id_output, x=field, ax=axes[row, 1], bins=bins)
         median = id_output[field].median()
-        std = id_output[field].std()
+        std = max(id_output[field].std(), 0.5)
         axes[row, 1].set_xlim([median - std, median + std])
 
     plt.tight_layout()

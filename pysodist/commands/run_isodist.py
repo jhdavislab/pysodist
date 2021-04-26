@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 @author: Joey Davis <jhdavis@mit.edu> jhdavislab.org
+@version: 0.0.4
 """
 
 import subprocess
@@ -153,11 +154,8 @@ def compile_isodist_csvs(csv_list, output_csv_name, parsed_pysodist_input=None, 
         parsed_csv = pd.read_csv(current_csv).drop(['tim', 'symb'], axis=1)
 
         if associate_proteins:
-            print('&&&&'+current_csv)
             for row in range(parsed_csv.shape[0]):
                 current_peptide = parsed_csv.loc[row, 'pep']
-                print('&&&&'+current_peptide)
-                print(parsed_tsv)
                 associated_protein = \
                     parsed_tsv[parsed_tsv['peptide_modified_sequence'] == current_peptide]['protein_IDs'].values
                 assert associated_protein.shape[0] > 0, \
@@ -189,7 +187,7 @@ def write_batch(current_peptide, batch_path, spectra_string):
         to_write.write(string + '\n')
 
 
-def write_isodist_input(batch_file_path, atomfile, resfile, niter=5, sigma=100.0, B=1.0, offset=0.05, GW=0.001):
+def write_isodist_input(batch_file_path, atomfile, resfile, niter=5, sigma=100.0, B=1.0, offset=0.01, GW=0.0175):
     """
     Writes an isodist input file
     :param batch_file_path: the path to the batchfile on which to base the input files
@@ -210,11 +208,11 @@ def write_isodist_input(batch_file_path, atomfile, resfile, niter=5, sigma=100.0
         output.write('./' + batch_file_name + ' = batchfile: file containing peptides, chgs, peaks\n')
         output.write(atomfile + ' = atomfile\n')
         output.write(resfile + ' = resfile\n')
-        output.write(str(niter) + ' = niter # of interactions for each round of least squares (Default = 5\n')
-        output.write(str(sigma) + ' sigma std deviation of noise (currently read by not used) Default=100\n')
-        output.write(str(B) + ' auto = B : initial guess for baseline (Default = 1.0)\n')
-        output.write(str(offset) + ' = OFF : initial guess for accuracy offset (Default = 0.005)\n')
-        output.write(str(GW) + ' = GW : initial guess for gaussian width (Default = 0.05)\n')
+        output.write(str(niter) + ' = niter # of interactions for each round of least squares.\n')
+        output.write(str(sigma) + ' sigma std deviation of noise (currently read by not used).\n')
+        output.write(str(B) + ' auto = B : initial guess for baseline.\n')
+        output.write(str(offset) + ' = OFF : initial guess for accuracy offset.\n')
+        output.write(str(GW) + ' = GW : initial guess for gaussian width.\n')
     return in_file_path
 
 

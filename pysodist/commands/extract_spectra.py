@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 @author: Joey Davis <jhdavis@mit.edu> jhdavislab.org
+@version: 0.0.4
 """
 
 import numpy as np
