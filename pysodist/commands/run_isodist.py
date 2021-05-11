@@ -17,7 +17,6 @@ import tarfile
 import sys
 
 log = utilities.log
-vlog = utilities.vlog
 
 
 def wait(processes, limit, wait_time, logfile=None):
