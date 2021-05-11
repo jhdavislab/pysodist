@@ -11,7 +11,6 @@ from pysodist.utils import utilities
 import pysodist
 
 log = utilities.log
-vlog = utilities.vlog
 
 ''' This tool is designed to help configure pysodist for a given dataset. It is not necessary, but may make running
 pysodist easier. To use it, you should first know the following about your dataset
