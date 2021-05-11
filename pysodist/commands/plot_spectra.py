@@ -25,7 +25,6 @@ import pysodist.utils.skyline_report_defs as defs
 from pysodist.utils import utilities
 
 log = utilities.log
-vlog = utilities.vlog
 import sys
 
 
