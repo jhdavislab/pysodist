@@ -12,7 +12,6 @@ import sys
 from pysodist.utils import utilities
 
 log = utilities.log
-vlog = utilities.vlog
 
 ''' This tool is designed as an initial parser for skyline report files to get them into a common form that pysodist 
 can then use to extract spectra. This has been designed to allow for rapid changes to the skyline parser if the report 
