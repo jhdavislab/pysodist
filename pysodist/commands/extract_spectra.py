@@ -17,7 +17,6 @@ from pysodist.utils import utilities
 import sys
 
 log = utilities.log
-vlog = utilities.vlog
 
 
 def write_scan(select_scan, file_name):
