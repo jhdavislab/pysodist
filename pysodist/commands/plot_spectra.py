@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 @author: Joey Davis <jhdavis@mit.edu> jhdavislab.org
-@version: 0.0.4
+@version: 0.0.5
 """
 
 import warnings
@@ -23,10 +23,10 @@ import pysodist
 import shutil
 import pysodist.utils.skyline_report_defs as defs
 from pysodist.utils import utilities
+import sys
 
 log = utilities.log
-vlog = utilities.vlog
-import sys
+
 
 
 def parse_isodist_csv(file_path, logfile=None):

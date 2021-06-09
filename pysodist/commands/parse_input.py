@@ -12,7 +12,6 @@ import sys
 from pysodist.utils import utilities
 
 log = utilities.log
-vlog = utilities.vlog
 
 ''' This tool is designed as an initial parser for skyline report files to get them into a common form that pysodist 
 can then use to extract spectra. This has been designed to allow for rapid changes to the skyline parser if the report 
@@ -212,31 +211,13 @@ def parse_skyline(path_to_skyline_csv, output_directory, sample_list=None, prote
 
 def add_args(parser):
     parser.add_argument('input', help='input file to parse.')
-    parser.add_argument('--output_directory', default='./',
-                        help='Output files will be saved in this folder: 1 directory '
-                             'per sample in the skyline report. Default = ./')
-    parser.add_argument('--sample_list', nargs='*', default=None,
-                        help='An optional list of samples to parse. By default '
-                             'all samples in the report are analyzed. Each sample separated by a space')
-    parser.add_argument('--protein_list', nargs='*', default=None,
-                        help='An optional list of the proteins to parse. By default, all proteins in the report are '
-                             'analyzed. Each Protein Gene Name separated by a space.')
-    parser.add_argument('--isotope', default='light', help='Be default, it is assumed that the report contains a light '
-                                                           'isotope (no special labeling), if this field is not present'
-                                                           'in the report, you can specify a different field here '
-                                                           '(e.g. "heavy")')
-    parser.add_argument('--q_value', default=0.00,
-                        help='Used to optionally filter the report file based on the q_value. '
-                             'By default, no q_value filtering is used.')
-    parser.add_argument('--logfile', default=None, help='Optionally provide a path to a logfile to store outputs')
     return parser
 
 
 def main(args):
-    log('\n****INITIATING****', args.logfile)
+    log('\n****INITIATING PARSE_INPUT****', args.logfile)
     log('executed command: ' + " ".join(sys.argv), args.logfile)
-    sample_list = args.sample_list
-    parse_skyline(args.input, sample_list=sample_list, protein_list=args.protein_list,
+    parse_skyline(args.input, sample_list=args.sample_list, protein_list=args.protein_list,
                   isotope=args.isotope, q_value=args.q_value,
                   output_directory=args.output_directory, logfile=args.logfile)
     log('\n++++COMPLETED parse_input++++\n\n', args.logfile)

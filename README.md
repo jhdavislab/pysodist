@@ -14,6 +14,10 @@ The algorithm is described in 1. Utilization of a related tool can be found in 2
 
 4. Davis JH*, Tan YZ*, Carragher B, Potter CS, Lyumkis D, Williamson JR. Modular assembly of the bacterial large ribosomal subunit. Cell 2016. 167(6):1610-1622.
 
+## New in v0.0.5
+**Version 0.0.5:**
+* Added algorithm from Laurel Kinman to fit chromatographic peaks, and to use these fits to filter/refine analysis 
+
 ## New in v0.0.4
 **Version 0.0.4:**
 * Imporved error reporting

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 @author: Joey Davis <jhdavis@mit.edu> jhdavislab.org
-@version: 0.0.4
+@version: 0.0.5
 """
 
 from datetime import datetime as dt

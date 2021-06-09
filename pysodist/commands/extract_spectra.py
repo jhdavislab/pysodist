@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 @author: Joey Davis <jhdavis@mit.edu> jhdavislab.org
-@version: 0.0.4
+@version: 0.0.5
 """
 
 import numpy as np
@@ -17,7 +17,6 @@ from pysodist.utils import utilities
 import sys
 
 log = utilities.log
-vlog = utilities.vlog
 
 
 def write_scan(select_scan, file_name):
@@ -224,7 +223,7 @@ def add_args(parser):
 
 
 def main(args):
-    log('\n****INITIATING****', args.logfile)
+    log('\n****INITIATING EXTRACT_SPECTRA****', args.logfile)
     log('executed command: ' + " ".join(sys.argv), args.logfile)
     parsed_report = args.parsed_report.replace('\\', '/')
     output_dir = '/'.join(parsed_report.split('/')[:-1]) + '/'

@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 """
 @author: Joey Davis <jhdavis@mit.edu> jhdavislab.org
-@version: 0.0.4
+@version: 0.0.5
 """
 
 import pandas as pd
+
 ########################################################
 #####SKYLINE REPORT FIELD DEFINITIONS###################
 ########################################################
@@ -43,86 +44,88 @@ AMPF = 'AMP_F'
 #####MASS SPEC GENERAL DEFINITIONS######################
 ########################################################
 AAWEIGHTS = {
-    'A':71.03711,
-    'R':156.10111,
-    'N':114.04293,
-    'D':115.02694,
-    'C':103.00919,
-    'E':129.04259,
-    'Q':128.05858,
-    'G':57.02146,
-    'H':137.05891,
-    'I':113.08406,
-    'L':113.08406,
-    'K':128.09496,
-    'M':131.04049,
-    'F':147.06841,
-    'P':97.05276,
-    'S':87.03203,
-    'T':101.04768,
-    'W':186.07931,
-    'Y':163.06333,
-    'V':99.06841
+    'A': 71.03711,
+    'R': 156.10111,
+    'N': 114.04293,
+    'D': 115.02694,
+    'C': 103.00919,
+    'E': 129.04259,
+    'Q': 128.05858,
+    'G': 57.02146,
+    'H': 137.05891,
+    'I': 113.08406,
+    'L': 113.08406,
+    'K': 128.09496,
+    'M': 131.04049,
+    'F': 147.06841,
+    'P': 97.05276,
+    'S': 87.03203,
+    'T': 101.04768,
+    'W': 186.07931,
+    'Y': 163.06333,
+    'V': 99.06841
 }
 AANITROGENS = {
-    'A':1,
-    'R':4,
-    'N':2,
-    'D':1,
-    'C':1,
-    'c':1, # +57 mod cys (carbamidomethylated cys, iodoacetamide treatement - typically does not get labeled differently from normal cys)
-    'b':1, # +58 mod cys (carboxymethylated cys, iodoacetic acid treatement - typically does not get labeled differently from normal cys)
-    'E':1,
-    'Q':2,
-    'G':1,
-    'H':3,
-    'I':1,
-    'L':1,
-    'K':2,
-    'M':1,
-    'm':1, # oxidized methionine (typically does not get labeled differently from normal met)
-    'F':1,
-    'P':1,
-    'S':1,
-    'T':1,
-    'W':2,
-    'Y':1,
-    'V':1
+    'A': 1,
+    'R': 4,
+    'N': 2,
+    'D': 1,
+    'C': 1,
+    'c': 1,
+    # +57 mod cys (carbamidomethylated cys, iodoacetamide - typically does not get labeled differently from normal cys)
+    'b': 1,
+    # +58 mod cys (carboxymethylated cys, iodoacetic acid - typically does not get labeled differently from normal cys)
+    'E': 1,
+    'Q': 2,
+    'G': 1,
+    'H': 3,
+    'I': 1,
+    'L': 1,
+    'K': 2,
+    'M': 1,
+    'm': 1,  # oxidized methionine (typically does not get labeled differently from normal met)
+    'F': 1,
+    'P': 1,
+    'S': 1,
+    'T': 1,
+    'W': 2,
+    'Y': 1,
+    'V': 1
 }
 
 AACARBONS = {
-    'A':3,
-    'R':6,
-    'N':4,
-    'D':4,
-    'C':3,
-    'c':3, # +57 mod cys (carbamidomethylated cys, iodoacetamide treatement)
-    'b':3, # +58 mod cys (carboxymethylated cys, iodoacetic acid treatement)
-    'E':5,
-    'Q':5,
-    'G':2,
-    'H':6,
-    'I':6,
-    'L':6,
-    'K':6,
-    'M':5,
-    'm':5, # oxidized methionine (typically does not get labeled differently from normal met)
-    'F':9,
-    'P':5,
-    'S':3,
-    'T':4,
-    'W':11,
-    'Y':9,
-    'V':5
+    'A': 3,
+    'R': 6,
+    'N': 4,
+    'D': 4,
+    'C': 3,
+    'c': 3,  # +57 mod cys (carbamidomethylated cys, iodoacetamide treatment)
+    'b': 3,  # +58 mod cys (carboxymethylated cys, iodoacetic acid treatment)
+    'E': 5,
+    'Q': 5,
+    'G': 2,
+    'H': 6,
+    'I': 6,
+    'L': 6,
+    'K': 6,
+    'M': 5,
+    'm': 5,  # oxidized methionine (typically does not get labeled differently from normal met)
+    'F': 9,
+    'P': 5,
+    'S': 3,
+    'T': 4,
+    'W': 11,
+    'Y': 9,
+    'V': 5
 }
 
 ISODIST_MOD = {
-    'M[+15.994915]' : 'm',
-    'C[+57.021464]' : 'c',
-    'C[+58.005479]' : 'b'
+    'M[+15.994915]': 'm',
+    'C[+57.021464]': 'c',
+    'C[+58.005479]': 'b'
 }
 
-PMS_MOD = {value:key for key, value in ISODIST_MOD.items()}
+PMS_MOD = {value: key for key, value in ISODIST_MOD.items()}
 
 N14MASS = 14.0030740048
 N15MASS = 15.0001088982

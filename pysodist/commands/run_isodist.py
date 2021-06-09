@@ -17,7 +17,6 @@ import tarfile
 import sys
 
 log = utilities.log
-vlog = utilities.vlog
 
 
 def wait(processes, limit, wait_time, logfile=None):
@@ -300,7 +299,7 @@ def add_args(parser):
 
 def main(args):
     logfile = args.logfile
-    log('\n****INITIATING****', logfile)
+    log('\n****INITIATING RUN_ISODIST****', logfile)
     log('executed command: ' + " ".join(sys.argv), logfile)
 
     input_file = args.input_file.replace('\\', '/')
