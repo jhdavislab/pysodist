@@ -47,11 +47,11 @@ def add_args(parser):
                         help='Used to optionally filter the report file based on the q_value. '
                              'By default, no q_value filtering is used.')
     # noinspection PyProtectedMember
-    parser.add_argument('--atom_file', type=str, default=pysodist._ROOT+'/model_files/atoms.txt',
+    parser.add_argument('--atom_file', type=str, default=pysodist._ROOT+'/utils/model_files/atoms.txt',
                         help='Absolute path to the atom file '
                              '(typically in [pysodist_installed_directory]/model_files/atoms.txt')
     # noinspection PyProtectedMember
-    parser.add_argument('--res_file', type=str, default=pysodist._ROOT+'/model_files/U_var500N_fix998N.txt',
+    parser.add_argument('--res_file', type=str, default=pysodist._ROOT+'/utils/model_files/U_var500N_fix998N.txt',
                         help='Absolute path to the residue file '
                              '(typically in [pysodist_installed_directory]/model_files/U_var500N_fix998N.txt)'
                              'Note that you may need to create a new file based on your labeling scheme. When you'
