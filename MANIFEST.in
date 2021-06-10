@@ -1,1 +1,2 @@
 include pysodist/utils/*ipynb
+include pysodist/model_files/*txt
