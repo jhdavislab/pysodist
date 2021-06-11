@@ -8,6 +8,13 @@ from datetime import datetime as dt
 import sys
 
 
+def clean_path(path):
+    path = path.replace('\\', '/')
+    if path[-1] != '/':
+        path += '/'
+    return path
+
+
 def log(msg, outfile=None):
     msg = '{} --> {}'.format(dt.now().strftime('%Y-%m-%d %H:%M:%S'), msg)
     print(msg)
