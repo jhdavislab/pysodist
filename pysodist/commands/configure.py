@@ -33,7 +33,7 @@ def load_config_file(config_file, logfile=None):
 
         log('Pre-configuration file: ' + config_file + ' provided. Checking each argument.', logfile)
 
-        config_data = clean_config(config_data)
+        config_data = utilities.clean_config(config_data)
         assert (config_data.loc['isodist_exe']['VALUE'] == 'PYTHON' or
                 path.exists(config_data.loc['isodist_exe']['VALUE'])), \
             config_data.loc['isodist_exe']['VALUE'] + \
