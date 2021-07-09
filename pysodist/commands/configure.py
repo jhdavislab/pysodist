@@ -47,9 +47,9 @@ def load_config_file(config_file, logfile=None):
         assert (config_data.loc['guide_file']['VALUE'] is None or
                 path.exists(config_data.loc['guide_file']['VALUE'])), \
             config_data.loc['guide_file']['VALUE'] + ' not found.'
-        assert (config_data.loc['mzml_file']['VALUE'] is None or
-                path.exists(config_data.loc['mzml_file']['VALUE'])), \
-            config_data.loc['mzml_file']['VALUE'] + 'not found.'
+        assert (config_data.loc['mzml_directory']['VALUE'] is None or
+                path.exists(config_data.loc['mzml_directory']['VALUE'])), \
+            config_data.loc['mzml_directory']['VALUE'] + 'not found.'
 
         assert (0.0 <= float(config_data.loc['q_value']['VALUE']) <= 1.0)
         assert (1000 < float(config_data.loc['ms1_resolution']['VALUE']) < 1000000)
@@ -103,9 +103,10 @@ def add_args(parser):
                           help='Used to optionally filter the report file based on the q_value. '
                                'By default, no q_value filtering is used.')
 
-    es_group.add_argument('--mzml_file', type=str, default=None,
-                          help='Provide the full path to the mzml file. If not provided, the default of None is used, '
-                               'and this file can be provided during the extract_spectra stage.')
+    es_group.add_argument('--mzml_directory', type=str, default=None,
+                          help='Provide the full path to the folder containing the mzml files. Files should have the '
+                               'same name as the cognate sample name (e.g. sample_name.mzml). '
+                               'If not provided, this directory can be provided during the extract_spectra stage.')
     es_group.add_argument('--labeling', default='N15', help='The labeling scheme used for the highest mass isotope '
                                                             'envelope you expect to fit. '
                                                             'Possible values are: N15, C13,K6R6, K8R10')
@@ -166,12 +167,12 @@ def main(args):
                           'peak_rt_width': args.peak_rt_width,
                           'output_directory': output_directory,
                           'guide_file': args.guide_file,
-                          'mzml_file': args.mzml_file}}
+                          'mzml_directory': args.mzml_directory}}
         config_data = pd.DataFrame(data=data)
         config_data.index.name = 'FIELD'
         config_data = config_data.reindex(['output_directory',
                                            'guide_file',
-                                           'mzml_file',
+                                           'mzml_directory',
                                            'sample_list',
                                            'protein_list',
                                            'q_value',

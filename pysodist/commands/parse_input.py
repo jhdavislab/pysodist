@@ -203,7 +203,7 @@ def parse_skyline(path_to_skyline_csv, output_directory, sample_list=None, prote
             if not choice == 'y':
                 log('exiting parse_input as the desired output directory exists', logfile)
                 raise
-        log('Writing result to: ' + write_directory + '/pd_parsed_report.tsv', logfile)
+        log('writing result to: ' + write_directory + '/pd_parsed_report.tsv', logfile)
         output_list[-1].to_csv(write_directory + '/pd_parsed_report.tsv', sep='\t',
                                columns=['rt_start', 'rt_end', 'peptide_modified_sequence', 'charge',
                                         'mz', 'protein_IDs', 'start_pos', 'end_pos'], index=False)
@@ -225,12 +225,14 @@ def main(args):
     config_data = utilities.clean_config(config_data)
 
     logfile = config_data.loc['output_directory']['VALUE'] + args.logfile_name
+
+    log('****INITIATING PARSE_INPUT****', logfile)
+    log('executed command: ' + " ".join(sys.argv), logfile)
     log('loaded all config data.', logfile)
     if args.guide_file is not None:
-        config_data.loc['guide_file']['VALUE'] = args.guide_file
+        log('using guide file provided at command line, will override that provided in the configuration file.')
+        config_data.loc['guide_file']['VALUE'] = utilities.clean_path(args.guide_file)
 
-    log('\n****INITIATING PARSE_INPUT****', logfile)
-    log('executed command: ' + " ".join(sys.argv), logfile)
     assert path.exists(config_data.loc['guide_file']['VALUE']), \
         'Could not find provided guide file: ' + config_data['guide_file']['VALUE'] + \
         '. Please check that this file is present and try again.'
@@ -247,7 +249,7 @@ def main(args):
         'Please check this file before proceeding to extract spectra.')
 
     configure.write_config_file(config_data, '01_parse.cfg', logfile)
-    log('\n++++COMPLETED parse_input++++\n\n', logfile)
+    log('++++COMPLETED parse_input++++\n\n', logfile)
 
 
 if __name__ == "__main__":
