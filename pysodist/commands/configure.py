@@ -164,10 +164,13 @@ def main(args):
                           'res_file': args.res_file,
                           'q_value': args.q_value,
                           'ms1_resolution': args.ms1_resolution,
+                          'sum_only': args.sum_only,
+                          'interp_res': args.interp_res,
                           'peak_rt_width': args.peak_rt_width,
                           'output_directory': output_directory,
                           'guide_file': args.guide_file,
-                          'mzml_directory': args.mzml_directory}}
+                          'mzml_directory': args.mzml_directory,
+                          'labeling': args.labeling,}}
         config_data = pd.DataFrame(data=data)
         config_data.index.name = 'FIELD'
         config_data = config_data.reindex(['output_directory',
@@ -175,8 +178,11 @@ def main(args):
                                            'mzml_directory',
                                            'sample_list',
                                            'protein_list',
+                                           'labeling',
                                            'q_value',
                                            'isotope',
+                                           'sum_only',
+                                           'interp_res',
                                            'isodist_exe',
                                            'atom_file',
                                            'res_file',
