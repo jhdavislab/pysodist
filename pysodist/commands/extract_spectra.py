@@ -225,29 +225,27 @@ def extract_sample(sample, config_data, logfile=None):
     parsed_mzml = parse_mzml(mzml_file, logfile=logfile)
     extract_spectra(parsed_mzml, parsed_report, config_data.loc['output_directory']['VALUE'],
                     labeling=config_data.loc['labeling']['VALUE'],
-                    interp_res=config_data.loc['interp_res']['VALUE'],
-                    sum_spectra_only=config_data.loc['sum_only']['VALUE'])
+                    interp_res=float(config_data.loc['interp_res']['VALUE']),
+                    sum_spectra_only=bool(config_data.loc['sum_only']['VALUE']))
 
 
 def main(args):
     config_data = configure.load_config_file(args.configuration_file, logfile=None)
     config_data = utilities.clean_config(config_data)
 
-    logfile = config_data.loc['output_directory']['VALUE'] + args.logfile_name
+    logfile = config_data.loc['output_directory']['VALUE'] + args.logfile
 
-    log('****INITIATING EXTRACT_SPECTRA****', args.logfile)
-    log('executed command: ' + " ".join(sys.argv), args.logfile)
+    log('****INITIATING EXTRACT_SPECTRA****', logfile)
+    log('executed command: ' + " ".join(sys.argv), logfile)
     log('loaded all config data.', logfile)
 
-    all_samples = config_data.loc['sample_list']['VALUE']
-    print(all_samples)
-    print(all_samples[0])
+    all_samples = eval(config_data.loc['sample_list']['VALUE'])
 
     for sample in all_samples:
         log('extracting spectra for sample ' + sample, logfile)
         extract_sample(sample, config_data, logfile)
 
-    log('\n++++COMPLETED extract_spectra++++\n\n', args.logfile)
+    log('\n++++COMPLETED extract_spectra++++\n\n', logfile)
 
 
 if __name__ == "__main__":

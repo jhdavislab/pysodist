@@ -71,7 +71,7 @@ def extract_skyline_sub(full_dataframe, sample, protein_list=None, isotope='ligh
     assert required_cols[
                0] in full_dataframe.columns, 'the provided sample is likely not present. Check the sample name.'
     if not (protein_list is None):
-        new_data_frame = new_data_frame[new_data_frame[defs.PROTEIN_GENE_FIELD].isin(protein_list)]
+        new_data_frame = new_data_frame[new_data_frame[defs.PROTEIN_GENE_FIELD].isin(eval(protein_list))]
     return new_data_frame
 
 
@@ -188,6 +188,8 @@ def parse_skyline(path_to_skyline_csv, output_directory, sample_list=None, prote
         sample_fields = [' '.join(i.split(defs.SAMPLE_FIND_FIELD)[0].split(' ')[1:]) for i in skyline_complete.columns
                          if defs.SAMPLE_FIND_FIELD in i]
         sample_list = [i.strip() for i in set(sample_fields)]
+    else:
+        sample_list = eval(sample_list)
     output_list = []
     for sample in sample_list:
         log('working on sample: ' + sample, logfile)
