@@ -24,39 +24,41 @@ clean_path = utilities.clean_path
 '''
 
 
-def load_config_file(config_file, logfile_name=None):
+def load_config_file(config_file, logfile=None):
     if not path.exists(config_file):
         sys.exit('***ERROR*** Pre-configuration file: ' + config_file +
                  ' was not found. Please check that the file exists and try again.')
     else:
         config_data = pd.read_csv(config_file, sep=',', index_col='FIELD', comment='#')
         config_data.loc['output_directory']['VALUE'] = clean_path(config_data.loc['output_directory']['VALUE'])
-
-        if logfile_name is None:
-            try:
-                logfile = config_data.loc['output_directory']['VALUE'] + config_data['logfile_name']
-            except TypeError:
-                logfile = None
-        else:
-            logfile = config_data.loc['output_directory']['VALUE'] + logfile_name
+        config_data = config_data.where(config_data.notnull(), None)
 
         log('Pre-configuration file: ' + config_file + ' provided. Checking each argument.', logfile)
 
         config_data.loc['isodist_exe']['VALUE'] = config_data.loc['isodist_exe']['VALUE'].replace('\\', '/')
         config_data.loc['atom_file']['VALUE'] = config_data.loc['atom_file']['VALUE'].replace('\\', '/')
         config_data.loc['res_file']['VALUE'] = config_data.loc['res_file']['VALUE'].replace('\\', '/')
-
         assert (config_data.loc['isodist_exe']['VALUE'] == 'PYTHON' or
                 path.exists(config_data.loc['isodist_exe']['VALUE'])), \
             config_data.loc['isodist_exe']['VALUE'] + \
             ' not found. If planning to use the Python implementation, this field should be "PYTHON"'
+
         assert path.exists(config_data.loc['atom_file']['VALUE']), \
             log(config_data.loc['atom_file']['VALUE'] + ' not found.', logfile)
         assert path.exists(config_data.loc['res_file']['VALUE']), \
             log(config_data.loc['res_file']['VALUE'] + ' not found.', logfile)
+
+        assert (config_data.loc['guide_file']['VALUE'] is None or
+                path.exists(config_data.loc['guide_file']['VALUE'])), \
+            log(config_data.loc['guide_file']['VALUE'] + ' not found.', logfile)
+        assert (config_data.loc['mzml_file']['VALUE'] is None or
+                path.exists(config_data.loc['mzml_file']['VALUE'])), \
+            log(config_data.loc['mzml_file']['VALUE'] + 'not found.', logfile)
+
         assert (0.0 <= float(config_data.loc['q_value']['VALUE']) <= 1.0)
         assert (1000 < float(config_data.loc['ms1_resolution']['VALUE']) < 1000000)
         assert (0 < float(config_data.loc['peak_rt_width']['VALUE']) < 200)
+
         log('configure stage inputs were valid.', logfile)
     return config_data
 
@@ -77,9 +79,10 @@ def add_args(parser):
                                                  'If a preconfigured file is provided, that output directory will'
                                                  'be used instead of the one provided here.')
     parser.add_argument('--preconfigured', type=str, default=None,
-                        help='Provide the full path to a configuration file. If provided, all other options will be'
+                        help='Provide the full path to a configuration file. If provided, all other options will be '
                              'ignored, and this configuration file will simply be checked for errors/omissions.')
-    parser.add_argument('--logfile_name', default=None, help='Optionally provide a logfile name to store outputs')
+    parser.add_argument('--logfile_name', default='pysodist.log',
+                        help='Optionally provide a logfile name to store outputs. Default pysodist.log')
 
     pi_group = parser.add_argument_group('parse_input')
     es_group = parser.add_argument_group('extract_spectra')
@@ -90,7 +93,7 @@ def add_args(parser):
                                'the default of None is used and this file can be provided during the parse_input.')
     pi_group.add_argument('--sample_list', nargs='*', default=None,
                           help='An optional list of samples to parse. By Default '
-                               'all samples in the report are analyzed. Each sample separated by a space')
+                               'all samples in the report are analyzed. Each sample separated by a space.')
     pi_group.add_argument('--protein_list', nargs='*', default=None,
                           help='An optional list of the proteins to parse. By Default, all proteins in the report are '
                                'analyzed. Each Protein Gene Name separated by a space.')
@@ -98,7 +101,7 @@ def add_args(parser):
                           help='By Default, it is assumed that the report contains a light '
                                'isotope (no special labeling), if this field is not present'
                                'in the report, you can specify a different field here '
-                               '(e.g. "heavy")')
+                               '(e.g. "heavy").')
     pi_group.add_argument('--q_value', type=float, default=0.00,
                           help='Used to optionally filter the report file based on the q_value. '
                                'By default, no q_value filtering is used.')
@@ -140,10 +143,7 @@ def main(args):
         print('output directory does not exist. Creating directory: ' + output_directory)
         mkdir(output_directory)
 
-    try:
-        logfile = output_directory + args.logfile_name
-    except TypeError:
-        logfile = None
+    logfile = output_directory + args.logfile_name
 
     log('++++INITIATING++++', logfile)
     log('executed command: ' + " ".join(sys.argv), logfile)
@@ -158,8 +158,7 @@ def main(args):
                           'q_value': args.q_value,
                           'ms1_resolution': args.ms1_resolution,
                           'peak_rt_width': args.peak_rt_width,
-                          'logfile_name': args.logfile_name,
-                          'output_directory': args.output_directory,
+                          'output_directory': output_directory,
                           'guide_file': args.guide_file,
                           'mzml_file': args.mzml_file}}
         config_data = pd.DataFrame(data=data)
@@ -175,8 +174,8 @@ def main(args):
                                            'atom_file',
                                            'res_file',
                                            'ms1_resolution',
-                                           'peak_rt_width',
-                                           'logfile_name'])
+                                           'peak_rt_width'
+                                           ])
     else:
         config_data = load_config_file(args.preconfigured, logfile)
 

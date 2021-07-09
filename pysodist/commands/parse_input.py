@@ -13,6 +13,7 @@ from pysodist.utils import utilities
 from pysodist.commands import configure
 
 log = utilities.log
+clean_path = utilities.clean_path
 
 ''' This tool is designed as an initial parser for skyline report files to get them into a common form that pysodist 
 can then use to extract spectra. This has been designed to allow for rapid changes to the skyline parser if the report 
@@ -178,9 +179,8 @@ def parse_skyline(path_to_skyline_csv, output_directory, sample_list=None, prote
     mz of the light species, protein_IDs, peptide_start_position, peptide_end_position
     """
 
-    output_directory = output_directory.replace('\\', '/')
-    if output_directory[-1] != '/':
-        output_directory += '/'
+    output_directory = clean_path(output_directory)
+
     if not (os.path.exists(output_directory)):
         os.mkdir(output_directory)
     skyline_complete = pd.read_csv(path_to_skyline_csv, sep=',')
@@ -207,7 +207,7 @@ def parse_skyline(path_to_skyline_csv, output_directory, sample_list=None, prote
         output_list[-1].to_csv(write_directory + '/pd_parsed_report.tsv', sep='\t',
                                columns=['rt_start', 'rt_end', 'peptide_modified_sequence', 'charge',
                                         'mz', 'protein_IDs', 'start_pos', 'end_pos'], index=False)
-    return output_list
+    return sample_list
 
 
 def add_args(parser):
@@ -215,21 +215,19 @@ def add_args(parser):
     parser.add_argument('--guide_file', default=None,
                         help='Optionally provide a new full guide file path (this will overwrite the guide_file in the '
                              'configuration file, and a new configuration file will be produced.')
-    parser.add_argument('--logfile_name', default=None,
-                        help='Optionally provide a new logfile name (will overwrite the logfile in the configuration '
-                             'file, and a new configuration file will be produced with this logfile name.')
+    parser.add_argument('--logfile_name', default='pysodist.log',
+                        help='Optionally provide a logfile name to store outputs. Default pysodist.log')
     return parser
 
 
 def main(args):
-    config_data = configure.load_config_file(args.configuration_file, args.logfile_name)
+    config_data = configure.load_config_file(args.configuration_file, logfile=None)
+    config_data.loc['output_directory']['VALUE'] = clean_path(config_data.loc['output_directory']['VALUE'])
 
-    if args.logfile_name is not None:
-        config_data['logfile_name']['VALUE'] = args.logfile_name
+    logfile = config_data.loc['output_directory']['VALUE'] + args.logfile_name
+    log('loaded all config data.', logfile)
     if args.guide_file is not None:
         config_data.loc['guide_file']['VALUE'] = args.guide_file
-
-    logfile = config_data.loc['output_directory']['VALUE'] + config_data['logfile_name']['VALUE']
 
     log('\n****INITIATING PARSE_INPUT****', logfile)
     log('executed command: ' + " ".join(sys.argv), logfile)
@@ -237,20 +235,24 @@ def main(args):
         'Could not find provided guide file: ' + config_data['guide_file']['VALUE'] + \
         '. Please check that this file is present and try again.'
     log('found provided guide file: ' + config_data.loc['guide_file']['VALUE'])
-    parse_skyline(config_data.loc['guide_file']['VALUE'],
-                  sample_list=config_data['sample_list']['VALUE'],
-                  protein_list=config_data['protein_list']['VALUE'],
-                  isotope=config_data['isotope']['VALUE'],
-                  q_value=config_data['q_value']['VALUE'],
-                  output_directory=config_data['output_directory']['VALUE'],
-                  logfile=logfile)
+    sample_list = parse_skyline(config_data.loc['guide_file']['VALUE'],
+                                sample_list=config_data['sample_list']['VALUE'],
+                                protein_list=config_data['protein_list']['VALUE'],
+                                isotope=config_data['isotope']['VALUE'],
+                                q_value=config_data['q_value']['VALUE'],
+                                output_directory=config_data['output_directory']['VALUE'],
+                                logfile=logfile)
+    config_data.loc['sample_list']['VALUE'] = sample_list
+    log('writing configuration file. 01_parse.cfg'
+        'Please check this file before proceeding to extract spectra.')
+
     configure.write_config_file(config_data, '01_parse.cfg', logfile)
     log('\n++++COMPLETED parse_input++++\n\n', logfile)
 
 
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser(
-        description='Pysodist input file parser. Used to parse report files from tools such'
+        description='XXXPysodist input file parser. Used to parse report files from tools such'
                     ' as Skyline, EncyclopeDIA, or TPP, which provide a list of detected '
                     'peptides and retention times. As of version 0.0.5, only skyline report file '
                     'parsing is implemented.')
