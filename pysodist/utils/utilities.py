@@ -22,6 +22,12 @@ def clean_config(config_data):
     config_data.loc['res_file']['VALUE'] = clean_path(config_data.loc['res_file']['VALUE'])[:-1]
     config_data.loc['guide_file']['VALUE'] = clean_path(config_data.loc['guide_file']['VALUE'])[:-1]
     config_data.loc['mzml_file']['VALUE'] = clean_path(config_data.loc['mzml_file']['VALUE'])[:-1]
+
+    config_data.loc['q_value']['VALUE'] = float(config_data.loc['q_value']['VALUE'])
+    config_data.loc['ms1_resolution']['VALUE'] = float(config_data.loc['ms1_resolution']['VALUE'])
+    config_data.loc['peak_rt_width']['VALUE'] = float(config_data.loc['peak_rt_width']['VALUE'])
+
+
     return config_data
 
 

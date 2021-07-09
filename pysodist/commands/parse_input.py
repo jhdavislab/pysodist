@@ -223,6 +223,7 @@ def add_args(parser):
 def main(args):
     config_data = configure.load_config_file(args.configuration_file, logfile=None)
     config_data = utilities.clean_config(config_data)
+
     logfile = config_data.loc['output_directory']['VALUE'] + args.logfile_name
     log('loaded all config data.', logfile)
     if args.guide_file is not None:
@@ -235,11 +236,11 @@ def main(args):
         '. Please check that this file is present and try again.'
     log('found provided guide file: ' + config_data.loc['guide_file']['VALUE'])
     sample_list = parse_skyline(config_data.loc['guide_file']['VALUE'],
-                                sample_list=config_data['sample_list']['VALUE'],
-                                protein_list=config_data['protein_list']['VALUE'],
-                                isotope=config_data['isotope']['VALUE'],
-                                q_value=config_data['q_value']['VALUE'],
-                                output_directory=config_data['output_directory']['VALUE'],
+                                sample_list=config_data.loc['sample_list']['VALUE'],
+                                protein_list=config_data.loc['protein_list']['VALUE'],
+                                isotope=config_data.loc['isotope']['VALUE'],
+                                q_value=config_data.loc['q_value']['VALUE'],
+                                output_directory=config_data.loc['output_directory']['VALUE'],
                                 logfile=logfile)
     config_data.loc['sample_list']['VALUE'] = sample_list
     log('writing configuration file. 01_parse.cfg'

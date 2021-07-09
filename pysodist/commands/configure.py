@@ -31,7 +31,7 @@ def load_config_file(config_file, logfile=None):
         config_data = pd.read_csv(config_file, sep=',', index_col='FIELD', comment='#')
         config_data = config_data.where(config_data.notnull(), None)
 
-        log('Pre-configuration file: ' + config_file + ' provided. Checking each argument.', logfile)
+        log('pre-configuration file: ' + config_file + ' provided. Checking each argument.', logfile)
 
         config_data = utilities.clean_config(config_data)
         assert (config_data.loc['isodist_exe']['VALUE'] == 'PYTHON' or
@@ -40,16 +40,16 @@ def load_config_file(config_file, logfile=None):
             ' not found. If planning to use the Python implementation, this field should be "PYTHON"'
 
         assert path.exists(config_data.loc['atom_file']['VALUE']), \
-            log(config_data.loc['atom_file']['VALUE'] + ' not found.', logfile)
+            config_data.loc['atom_file']['VALUE'] + ' not found.'
         assert path.exists(config_data.loc['res_file']['VALUE']), \
-            log(config_data.loc['res_file']['VALUE'] + ' not found.', logfile)
+            config_data.loc['res_file']['VALUE'] + ' not found.'
 
         assert (config_data.loc['guide_file']['VALUE'] is None or
                 path.exists(config_data.loc['guide_file']['VALUE'])), \
-            log(config_data.loc['guide_file']['VALUE'] + ' not found.', logfile)
+            config_data.loc['guide_file']['VALUE'] + ' not found.'
         assert (config_data.loc['mzml_file']['VALUE'] is None or
                 path.exists(config_data.loc['mzml_file']['VALUE'])), \
-            log(config_data.loc['mzml_file']['VALUE'] + 'not found.', logfile)
+            config_data.loc['mzml_file']['VALUE'] + 'not found.'
 
         assert (0.0 <= float(config_data.loc['q_value']['VALUE']) <= 1.0)
         assert (1000 < float(config_data.loc['ms1_resolution']['VALUE']) < 1000000)
@@ -184,6 +184,8 @@ def main(args):
                                            ])
     else:
         config_data = load_config_file(args.preconfigured, logfile)
+        log('note that the output directory provided will overwrite what was in the preconfiguration file.', logfile)
+        config_data.loc['output_directory']['VALUE'] = output_directory
 
     config_data = utilities.clean_config(config_data)
     write_config_file(config_data, '00_config.cfg', logfile)
