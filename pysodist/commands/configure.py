@@ -12,7 +12,6 @@ import pandas as pd
 import pysodist
 
 log = utilities.log
-clean_path = utilities.clean_path
 
 ''' This tool is designed to help configure pysodist for a given dataset. To use it, you should must know the following
     * MS 1 resolution - pysodist will use this value to make an initial guess at the Gaussian width used in fitting. 
@@ -30,14 +29,11 @@ def load_config_file(config_file, logfile=None):
                  ' was not found. Please check that the file exists and try again.')
     else:
         config_data = pd.read_csv(config_file, sep=',', index_col='FIELD', comment='#')
-        config_data.loc['output_directory']['VALUE'] = clean_path(config_data.loc['output_directory']['VALUE'])
         config_data = config_data.where(config_data.notnull(), None)
 
         log('Pre-configuration file: ' + config_file + ' provided. Checking each argument.', logfile)
 
-        config_data.loc['isodist_exe']['VALUE'] = config_data.loc['isodist_exe']['VALUE'].replace('\\', '/')
-        config_data.loc['atom_file']['VALUE'] = config_data.loc['atom_file']['VALUE'].replace('\\', '/')
-        config_data.loc['res_file']['VALUE'] = config_data.loc['res_file']['VALUE'].replace('\\', '/')
+        config_data = clean_config(config_data)
         assert (config_data.loc['isodist_exe']['VALUE'] == 'PYTHON' or
                 path.exists(config_data.loc['isodist_exe']['VALUE'])), \
             config_data.loc['isodist_exe']['VALUE'] + \
@@ -81,13 +77,14 @@ def add_args(parser):
     parser.add_argument('--preconfigured', type=str, default=None,
                         help='Provide the full path to a configuration file. If provided, all other options will be '
                              'ignored, and this configuration file will simply be checked for errors/omissions.')
-    parser.add_argument('--logfile_name', default='pysodist.log',
+    parser.add_argument('--logfile', default='pysodist.log',
                         help='Optionally provide a logfile name to store outputs. Default pysodist.log')
 
     pi_group = parser.add_argument_group('parse_input')
     es_group = parser.add_argument_group('extract_spectra')
     fs_group = parser.add_argument_group('fit_spectra')
     af_group = parser.add_argument_group('analyze_fit')
+
     pi_group.add_argument('--guide_file', type=str, default=None,
                           help='Provide the full path to the guide file (e.g. a skyline report file). If not provided, '
                                'the default of None is used and this file can be provided during the parse_input.')
@@ -109,6 +106,15 @@ def add_args(parser):
     es_group.add_argument('--mzml_file', type=str, default=None,
                           help='Provide the full path to the mzml file. If not provided, the default of None is used, '
                                'and this file can be provided during the extract_spectra stage.')
+    es_group.add_argument('--labeling', default='N15', help='The labeling scheme used for the highest mass isotope '
+                                                            'envelope you expect to fit. '
+                                                            'Possible values are: N15, C13,K6R6, K8R10')
+    es_group.add_argument('--sum_only', action='store_const', const=True, default=False,
+                          help='Only save summed (and interpolated) spectra instead of all individual spectra. '
+                               'Results in 1 spectra per peptide. Optional, default is to extract all spectra.')
+    es_group.add_argument('--interp_res', default=0.001, type=float,
+                          help='Set the interpolation delta m/z - typical values from 0.01 to 0.001. '
+                               'Optional, default is 0.001.')
 
     fs_group.add_argument('--isodist_exe', type=str, default='PYTHON',
                           help='Full path to a compiled isodist executable if you want to use the Fortran version.'
@@ -136,14 +142,14 @@ def add_args(parser):
 
 
 def main(args):
-    output_directory = clean_path(args.output_directory)
+    output_directory = utilities.clean_path(args.output_directory)
     if path.exists(output_directory):
-        print('output directory already exists, using this directory.')
+        print('** output directory already exists, using this directory.')
     else:
-        print('output directory does not exist. Creating directory: ' + output_directory)
+        print('** output directory does not exist. Creating directory: ' + output_directory)
         mkdir(output_directory)
 
-    logfile = output_directory + args.logfile_name
+    logfile = output_directory + args.logfile
 
     log('++++INITIATING++++', logfile)
     log('executed command: ' + " ".join(sys.argv), logfile)
@@ -179,8 +185,9 @@ def main(args):
     else:
         config_data = load_config_file(args.preconfigured, logfile)
 
+    config_data = utilities.clean_config(config_data)
     write_config_file(config_data, '00_config.cfg', logfile)
-    log('++++COMPLETED configure++++', logfile)
+    log('++++COMPLETED configure++++\n\n', logfile)
 
 
 if __name__ == "__main__":

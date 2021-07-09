@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 @author: Joey Davis <jhdavis@mit.edu> jhdavislab.org
-@version: 0.0.4
+@version: 0.0.5
 """
 
 import pandas as pd
@@ -11,9 +11,9 @@ import os
 import sys
 from pysodist.utils import utilities
 from pysodist.commands import configure
+from os import path
 
 log = utilities.log
-clean_path = utilities.clean_path
 
 ''' This tool is designed as an initial parser for skyline report files to get them into a common form that pysodist 
 can then use to extract spectra. This has been designed to allow for rapid changes to the skyline parser if the report 
@@ -179,7 +179,7 @@ def parse_skyline(path_to_skyline_csv, output_directory, sample_list=None, prote
     mz of the light species, protein_IDs, peptide_start_position, peptide_end_position
     """
 
-    output_directory = clean_path(output_directory)
+    output_directory = utilities.clean_path(output_directory)
 
     if not (os.path.exists(output_directory)):
         os.mkdir(output_directory)
@@ -222,8 +222,7 @@ def add_args(parser):
 
 def main(args):
     config_data = configure.load_config_file(args.configuration_file, logfile=None)
-    config_data.loc['output_directory']['VALUE'] = clean_path(config_data.loc['output_directory']['VALUE'])
-
+    config_data = utilities.clean_config(config_data)
     logfile = config_data.loc['output_directory']['VALUE'] + args.logfile_name
     log('loaded all config data.', logfile)
     if args.guide_file is not None:
@@ -252,9 +251,9 @@ def main(args):
 
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser(
-        description='XXXPysodist input file parser. Used to parse report files from tools such'
+        description='Pysodist input file parser. Used to parse report files from tools such'
                     ' as Skyline, EncyclopeDIA, or TPP, which provide a list of detected '
                     'peptides and retention times. As of version 0.0.5, only skyline report file '
-                    'parsing is implemented.')
+                    'parsing is currently implemented.')
     add_args(argparser)
     main(argparser.parse_args())

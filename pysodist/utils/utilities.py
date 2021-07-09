@@ -15,6 +15,16 @@ def clean_path(path):
     return path
 
 
+def clean_config(config_data):
+    config_data.loc['output_directory']['VALUE'] = clean_path(config_data.loc['output_directory']['VALUE'])
+    config_data.loc['isodist_exe']['VALUE'] = clean_path(config_data.loc['isodist_exe']['VALUE'][:-1])
+    config_data.loc['atom_file']['VALUE'] = clean_path(config_data.loc['atom_file']['VALUE'][:-1])
+    config_data.loc['res_file']['VALUE'] = clean_path(config_data.loc['res_file']['VALUE'][:-1])
+    config_data.loc['guide_file']['VALUE'] = clean_path(config_data.loc['guide_file']['VALUE'][:-1])
+    config_data.loc['mzml_file']['VALUE'] = clean_path(config_data.loc['mzml_file']['VALUE'][:-1])
+    return config_data
+
+
 def log(msg, outfile=None):
     msg = '{} --> {}'.format(dt.now().strftime('%Y-%m-%d %H:%M:%S'), msg)
     print(msg)
