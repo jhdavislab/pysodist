@@ -235,9 +235,15 @@ def main(args):
         log('using guide file provided at command line, will override that provided in the configuration file.')
         config_data.loc['guide_file']['VALUE'] = utilities.clean_path(args.guide_file)
 
-    assert path.exists(config_data.loc['guide_file']['VALUE']), \
-        'Could not find provided guide file: ' + config_data['guide_file']['VALUE'] + \
-        '. Please check that this file is present and try again.'
+    try:
+        path_error = 'Could not find provided guide file: ' + config_data['guide_file']['VALUE'] + \
+                     '. Please check that this file is present and try again.'
+        assert path.exists(config_data.loc['guide_file']['VALUE']), path_error
+
+    except TypeError:
+        print(path_error)
+        raise
+
     log('found provided guide file: ' + config_data.loc['guide_file']['VALUE'])
     sample_list = parse_skyline(config_data.loc['guide_file']['VALUE'],
                                 sample_list=config_data.loc['sample_list']['VALUE'],
