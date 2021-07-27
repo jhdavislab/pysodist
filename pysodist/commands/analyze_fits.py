@@ -3,7 +3,7 @@
 @author: Joey Davis <jhdavis@mit.edu> jhdavislab.org, Laurel Kinman <lkinman@mit.edu>
 @version: 0.0.5
 """
-
+'''
 import os
 import argparse
 import numpy as np
@@ -53,7 +53,7 @@ def gaussian(x, a, c, s, w):
     return a * np.exp(-(x + s) ** 2 / (2 * w ** 2)) + c
 
 
-def fit_amps(peptide_df, amp_col='AMP_F', func=gaussian()):
+def fit_amps(peptide_df, amp_col='AMP_F', func=gaussian):
     x = pd.to_numeric(peptide_df['retention_time']).values
 
     if type(amp_col) == str:
@@ -419,3 +419,5 @@ if __name__ == "__main__":
                     scatter_x=pepscanfilt_x, color='b',ax=ax,label='Pepscanfilt')
         IQR_boxplot(filtered_out[ratio_cols], scatter_x=filteredout_x, color='g', ax=ax, label='Filtered_out')
         fig.savefig(out + 'pepscanfilt_IQR.png')
+        
+'''
