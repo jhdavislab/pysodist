@@ -16,6 +16,7 @@ from scipy import optimize
 from multiprocessing import Pool
 from itertools import chain
 from pysodist.utils import utilities
+import sys
 
 log = utilities.log
 
@@ -229,8 +230,8 @@ def plot_filt_spectra(inputs):
     return
 
 
-def parse_config(input_file):
-    df = pd.read_csv(input_file, sep=',', header=)
+#def parse_config(input_file):
+#    df = pd.read_csv(input_file, sep=',', header=)
 
 
 def add_args(parser):
@@ -249,6 +250,7 @@ def add_args(parser):
 
 
 if __name__ == "__main__":
+    out = ''
     argparser = argparse.ArgumentParser()
     args = add_args(argparser).parse_args()
 
@@ -259,7 +261,7 @@ if __name__ == "__main__":
     if args.fitdir is not None:
         ft = args.fitdir
     else:
-        wd = '/'.join(isodist_results.split('/')[:-1])
+        #wd = '/'.join(isodist_results.split('/')[:-1])
         ft =  + [i for i in os.listdir(wd) if '_isodist_fits' in i][0] + '/'
 
     if not os.path.exists(args.output_directory):
@@ -351,69 +353,69 @@ if __name__ == "__main__":
     IQR_boxplot(nonsum_id[ratio_cols], scatter_x=nonsum_x, color='k', ax=ax, label='NONSUM')
     IQR_boxplot(gw_amp_filt[ratio_cols], expecteds=expected_ratios, scatter_x=gw_amp_x, color='c', ax=ax,
                     label='GW_AMP')
-        IQR_boxplot(subf, scatter_x=f_x, color='m', ax=ax, label='AMP_F')
-        plt.legend()
-        fig.savefig(out + 'amps_filt_IQR.png')
+    IQR_boxplot(subf, scatter_x=f_x, color='m', ax=ax, label='AMP_F')
+    plt.legend()
+    fig.savefig(out + 'amps_filt_IQR.png')
 
-        print('filtering by specified measure...')
-        s_col = 'Gaussian_' + abbrev + '_s'
-        w_col = 'Gaussian_' + abbrev + '_w'
+    print('filtering by specified measure...')
+    s_col = 'Gaussian_' + abbrev + '_s'
+    w_col = 'Gaussian_' + abbrev + '_w'
 
-        filt_peps = []
-        for pep in gw_amp_filt.loc[f_filt, 'pep'].unique():
-            pep_df = gw_amp_filt[gw_amp_filt['pep'] == pep]
-            pep_s = fit_results.loc[pep_df.index[0], s_col]
-            rts = pd.to_numeric(pep_df['retention_time'])
-            rt_lb = rts.min()
-            rt_ub = rts.max()
+    filt_peps = []
+    for pep in gw_amp_filt.loc[f_filt, 'pep'].unique():
+        pep_df = gw_amp_filt[gw_amp_filt['pep'] == pep]
+        pep_s = fit_results.loc[pep_df.index[0], s_col]
+        rts = pd.to_numeric(pep_df['retention_time'])
+        rt_lb = rts.min()
+        rt_ub = rts.max()
 
-            if -1 * pep_s <= rt_ub and -1 * pep_s >= rt_lb:
-                filt_peps.append(pep)
+        if -1 * pep_s <= rt_ub and -1 * pep_s >= rt_lb:
+            filt_peps.append(pep)
 
-        sub_pepfilt = gw_amp_filt[gw_amp_filt['pep'].isin(filt_peps)]
+    sub_pepfilt = gw_amp_filt[gw_amp_filt['pep'].isin(filt_peps)]
 
-        filt_scans = []
-        for spectra in sub_pepfilt.index:
-            rt = np.float(sub_pepfilt.loc[spectra, 'retention_time'])
-            s = fit_results.loc[spectra, s_col]
-            w = fit_results.loc[spectra, w_col]
-            rt_lb = -1 * s - 0.75 * w
-            rt_ub = -1 * s + 0.75 * w
-            if rt >= rt_lb and rt <= rt_ub:
-                filt_scans.append(spectra)
+    filt_scans = []
+    for spectra in sub_pepfilt.index:
+        rt = np.float(sub_pepfilt.loc[spectra, 'retention_time'])
+        s = fit_results.loc[spectra, s_col]
+        w = fit_results.loc[spectra, w_col]
+        rt_lb = -1 * s - 0.75 * w
+        rt_ub = -1 * s + 0.75 * w
+        if rt >= rt_lb and rt <= rt_ub:
+            filt_scans.append(spectra)
 
-        sub_pepscanfilt = gw_amp_filt.loc[filt_scans]
-        filtered_out = nonsum_id.loc[~nonsum_id.index.isin(filt_scans)]
+    sub_pepscanfilt = gw_amp_filt.loc[filt_scans]
+    filtered_out = nonsum_id.loc[~nonsum_id.index.isin(filt_scans)]
 
-        sub_pepscanfilt.to_csv(out + 'sub_pepscanfilt.csv')
-        filtered_out.to_csv(out + 'filtered_out.csv')
+    sub_pepscanfilt.to_csv(out + 'sub_pepscanfilt.csv')
+    filtered_out.to_csv(out + 'filtered_out.csv')
 
-        if args.plotfilt == True:
-            os.mkdir(out + 'pepscanfilt/')
-            os.mkdir(out + 'filtered_out/')
+    if args.plotfilt == True:
+        os.mkdir(out + 'pepscanfilt/')
+        os.mkdir(out + 'filtered_out/')
 
-            print('plotting filtered and filtered-out spectra...')
-            pepscanfilt_dfs = []
-            for pep in sub_pepscanfilt['pep'].unique():
-                sub = sub_pepscanfilt[sub_pepscanfilt['pep'] == pep]
-                pepscanfilt_dfs.append([sub, out + 'pepscanfilt/', ft, wd])
-            pool = Pool(args.threads)
-            pool.map(plot_filt_spectra, pepscanfilt_dfs)
+        print('plotting filtered and filtered-out spectra...')
+        pepscanfilt_dfs = []
+        for pep in sub_pepscanfilt['pep'].unique():
+            sub = sub_pepscanfilt[sub_pepscanfilt['pep'] == pep]
+            pepscanfilt_dfs.append([sub, out + 'pepscanfilt/', ft, wd])
+        pool = Pool(args.threads)
+        pool.map(plot_filt_spectra, pepscanfilt_dfs)
 
-            filteredout_dfs = []
-            for pep in filtered_out['pep'].unique():
-                sub = filtered_out[filtered_out['pep'] == pep]
-                filteredout_dfs.append([sub, out + 'filtered_out/', ft, wd])
-            pool = Pool(args.threads)
-            pool.map(plot_filt_spectra, filteredout_dfs)
+        filteredout_dfs = []
+        for pep in filtered_out['pep'].unique():
+            sub = filtered_out[filtered_out['pep'] == pep]
+            filteredout_dfs.append([sub, out + 'filtered_out/', ft, wd])
+        pool = Pool(args.threads)
+        pool.map(plot_filt_spectra, filteredout_dfs)
 
-            print('plotting filtered and filtered-out boxplots...')
-            fig, ax = plt.subplots(1, 1)
-            nonsum_x = [0, 1, 2]
-            pepscanfilt_x = [0.25, 1.25, 2.25]
-            filteredout_x = [0.5, 1.5, 2.5]
-            IQR_boxplot(nonsum_id[ratio_cols], scatter_x=nonsum_x, color='k', ax=ax, label='Nonsum')
-            IQR_boxplot(sub_pepscanfilt[ratio_cols], expecteds=expected_ratios,
-                        scatter_x=pepscanfilt_x, color='b',ax=ax,label='Pepscanfilt')
-            IQR_boxplot(filtered_out[ratio_cols], scatter_x=filteredout_x, color='g', ax=ax, label='Filtered_out')
-            fig.savefig(out + 'pepscanfilt_IQR.png')
+        print('plotting filtered and filtered-out boxplots...')
+        fig, ax = plt.subplots(1, 1)
+        nonsum_x = [0, 1, 2]
+        pepscanfilt_x = [0.25, 1.25, 2.25]
+        filteredout_x = [0.5, 1.5, 2.5]
+        IQR_boxplot(nonsum_id[ratio_cols], scatter_x=nonsum_x, color='k', ax=ax, label='Nonsum')
+        IQR_boxplot(sub_pepscanfilt[ratio_cols], expecteds=expected_ratios,
+                    scatter_x=pepscanfilt_x, color='b',ax=ax,label='Pepscanfilt')
+        IQR_boxplot(filtered_out[ratio_cols], scatter_x=filteredout_x, color='g', ax=ax, label='Filtered_out')
+        fig.savefig(out + 'pepscanfilt_IQR.png')
