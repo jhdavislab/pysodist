@@ -233,14 +233,14 @@ def main(args):
     log('loaded all config data.', logfile)
     if args.guide_file is not None:
         log('using guide file provided at command line, will override that provided in the configuration file.')
-        config_data.loc['guide_file']['VALUE'] = utilities.clean_path(args.guide_file)
+        config_data.loc['guide_file']['VALUE'] = utilities.clean_path(args.guide_file, trailing_slash=False)
 
+    path_error = '\n\n****ERROR****Could not find provided guide file: ' + \
+                 str(config_data.loc['guide_file']['VALUE']) + \
+                 '. Please check that this file is present, or provide the proper path in your config file ' \
+                 'or at the command line and try again.\n\n'
     try:
-        print(config_data)
-        path_error = 'Could not find provided guide file: ' + config_data['guide_file']['VALUE'] + \
-                     '. Please check that this file is present and try again.'
         assert path.exists(config_data.loc['guide_file']['VALUE']), path_error
-
     except TypeError:
         print(path_error)
         raise
