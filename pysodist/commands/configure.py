@@ -132,6 +132,14 @@ def add_args(parser):
                                'Note that you may need to create a new file based on your labeling scheme. When you'
                                'actually run fit_spectra, you can also specify a new residue file if you want'
                                'to iteratively try different labeling schemes to best fit your data.')
+    fs_group.add_argument('--threads', default=2, type=int,
+                          help='# of threads to use. typically 1 less than the number of cores available. Default=2')
+    fs_group.add_argument('--wait_time', default=20, type=int,
+                          help='Seconds between each test of whether isodist run has finished. Default=60 seconds')
+    fs_group.add_argument('--no_cleanup', action='store_const', const=True, default=False,
+                          help='Do not clean up the folder my moving around and deleting the intermediate files.')
+    fs_group.add_argument('--no_compress', action='store_const', const=True, default=False,
+                          help='Do not compress isodist log and intermediate processing files.')
     fs_group.add_argument('--ms1_resolution', type=float, default=60000.0,
                           help='MS1 resolution (calculated as full width half max at m/z=200).'
                                'Typical values are 25000 (SCIEX 5600); 60000 (QE HF-x). Default is 60000.')
@@ -163,14 +171,19 @@ def main(args):
                           'atom_file': args.atom_file,
                           'res_file': args.res_file,
                           'q_value': args.q_value,
-                          'ms1_resolution': args.ms1_resolution,
                           'sum_only': args.sum_only,
                           'interp_res': args.interp_res,
+                          'ms1_resolution': args.ms1_resolution,
+                          'threads': args.threads,
+                          'wait_time': args.wait_time,
+                          'no_cleanup': args.no_cleanup,
+                          'no_compress': args.no_compress,
                           'peak_rt_width': args.peak_rt_width,
                           'output_directory': output_directory,
                           'guide_file': args.guide_file,
                           'mzml_directory': args.mzml_directory,
-                          'labeling': args.labeling,}}
+                          'labeling': args.labeling,
+                          }}
         config_data = pd.DataFrame(data=data)
         config_data.index.name = 'FIELD'
         config_data = config_data.reindex(['output_directory',
@@ -186,6 +199,10 @@ def main(args):
                                            'isodist_exe',
                                            'atom_file',
                                            'res_file',
+                                           'threads',
+                                           'wait_time',
+                                           'no_cleanup',
+                                           'no_compress',
                                            'ms1_resolution',
                                            'peak_rt_width'
                                            ])
