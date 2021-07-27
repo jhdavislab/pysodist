@@ -20,7 +20,7 @@ def main():
     import pysodist.commands.run_isodist
     import pysodist.commands.plot_spectra
     import pysodist.commands.full_pipeline
-    import pysodist.commands.analyze_fits
+    #import pysodist.commands.analyze_fits
 
     modules = [pysodist.commands.configure,
                pysodist.commands.parse_input,
@@ -28,7 +28,7 @@ def main():
                pysodist.commands.run_isodist,
                pysodist.commands.plot_spectra,
                pysodist.commands.full_pipeline,
-               pysodist.commands.analyze_fits
+               #pysodist.commands.analyze_fits
                ]
 
     subparsers = parser.add_subparsers(title='Choose a command')
