@@ -9,9 +9,10 @@ import sys
 
 
 def clean_path(path):
-    path = path.replace('\\', '/')
-    if path[-1] != '/':
-        path += '/'
+    if not(path is None):
+        path = path.replace('\\', '/')
+        if path[-1] != '/':
+            path += '/'
     return path
 
 
