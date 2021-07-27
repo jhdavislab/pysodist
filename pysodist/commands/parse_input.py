@@ -236,6 +236,7 @@ def main(args):
         config_data.loc['guide_file']['VALUE'] = utilities.clean_path(args.guide_file)
 
     try:
+        print(config_data)
         path_error = 'Could not find provided guide file: ' + config_data['guide_file']['VALUE'] + \
                      '. Please check that this file is present and try again.'
         assert path.exists(config_data.loc['guide_file']['VALUE']), path_error
