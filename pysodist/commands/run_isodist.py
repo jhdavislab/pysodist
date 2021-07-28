@@ -16,12 +16,8 @@ import tarfile
 from pysodist.utils import utilities
 from pysodist.commands import configure
 import sys
-
 log = utilities.log
 clean_path = utilities.clean_path
-
-
-log = utilities.log
 
 
 def wait(processes, limit, wait_time, logfile=None):
@@ -276,9 +272,10 @@ def add_args(parser):
     parser.add_argument('--isodist_exe', nargs='?', default=None,
                         help='Exact fortran command to execute. '
                              'e.g. ~/software/pysodist/fortran/isodist or C:/isodist_win/isodist_win.exe. '
-                             'This parameter will override (and update) your configuration file.')
+                             'This parameter will override (and update) your configuration file. If using the Python'
+                             'implementation of pysodist, use "PYTHON" for this variable.')
     parser.add_argument('--atom_file', nargs='?', default=None,
-                        help='Path to the atom definition file (e.g. exp_atom_defs.txt). '
+                        help='Path to the atom definition file (e.g. ~/model_files/exp_atom_defs.txt). '
                              'You will likely not need to modify this file. This parameter will override '
                              '(and update) your configuration file.')
     parser.add_argument('--res_file', nargs='?', default=None,
@@ -309,32 +306,29 @@ def main(args):
 
     if not (args.isodist_exe is None):
         log('using isodist_exe provided at command line, will override that provided in the configuration file.')
-        config_data.loc['isodist_exe']['VALUE'] = utilities.clean_path(args.isodist_exe)
+        config_data.loc['isodist_exe']['VALUE'] = utilities.clean_path(args.isodist_exe, trailing_slash=False)
 
     if not (args.atom_file is None):
         log('using atom_file provided at command line, will override that provided in the configuration file.')
-        config_data.loc['atom_file']['VALUE'] = utilities.clean_path(args.atom_file)
+        config_data.loc['atom_file']['VALUE'] = utilities.clean_path(args.atom_file, trailing_slash=False)
 
     if not (args.res_file is None):
         log('using res_file provided at command line, will override that provided in the configuration file.')
-        config_data.loc['res_file']['VALUE'] = utilities.clean_path(args.res_file)
+        config_data.loc['res_file']['VALUE'] = utilities.clean_path(args.res_file, trailing_slash=False)
 
     config_data.loc['threads']['VALUE'] = args.threads
     config_data.loc['wait_time']['VALUE'] = args.wait_time
     config_data.loc['no_cleanup']['VALUE'] = args.no_cleanup
     config_data.loc['no_compress']['VALUE'] = args.no_compress
 
-    assert os.path.exists(input_file), \
-        'The provided input_file: ' + input_file + ' does not exist. Please check that the path provided is correct.'
-    assert os.path.exists(atomfile), \
-        'The provided atomfile: ' + atomfile + ' does not exist. Please check that the path provided is correct.'
-    assert os.path.exists(modelfile), \
-        'The provided modelfile: ' + modelfile + ' does not exist. Please check that the path is correct.'
-    assert os.path.exists(isodist_executable), \
+    assert os.path.exists(config_data.loc['atom_file']['VALUE']), \
+        'The provided atom_file: ' + config_data.loc['atom_file']['VALUE'] + \
+        ' does not exist. Please check that the path provided is correct.'
+    assert os.path.exists(config_data.loc['res_file']['VALUE']), \
+        'The provided res_file: ' + config_data.loc['res_file']['VALUE'] + \
+        ' does not exist. Please check that the path is correct.'
+    assert os.path.exists(config_data.loc['isodist_exe']['VALUE']), \
         'The provided isodist_executable: ' + isodist_executable + ' does not exist. Check the path.'
-    if not (args.pysodist_input is None):
-        assert os.path.exists(args.pysodist_input), \
-            'The provided pysodist input file: ' + args.pysodist_input + ' does not exist. Check the path.'
 
     working_dir = '/'.join(input_file.split('/')[:-1])
     modelfile_name = modelfile.split('/')[-1].split('.txt')[0]
@@ -372,6 +366,7 @@ def main(args):
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser(
         description='Fortran pysodist runner. '
-                    'Used to run fortran version of isodist and to clean up the outputs for subsequent plotting.')
+                    'Used to run either the Python or fortran version of isodist '
+                    'and to clean up the outputs for subsequent plotting.')
     add_args(argparser)
     main(argparser.parse_args())
