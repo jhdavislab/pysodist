@@ -1,0 +1,86 @@
+Unlabeled plus fractionally 13C labeled		= comment record, not used
+2   =   nspecies
+U  3  =   label and initial amplitude species 1
+L  3.5  =   label and initial amplitude species 2
+6       =   number of atom types
+C default	
+H default
+N default
+O default
+S default
+CX variable 0.5 = initial value for variable atom
+A default [3]
+  3 5 1 1 0 0
+  0 5 1 1 0 3
+C default [3]
+  3 5 1 1 1 0
+  0 5 1 1 1 3
+c default [3]
+  5 8 2 2 1 0     Cys Carbamidomethylation
+  2 8 2 2 1 3
+b default []
+  5 7 1 3 1 0     Cys carboxymethylation
+  2 7 1 3 1 3
+D default []
+  4 5 1 3 0 0
+  0 5 1 3 0 4
+E default []
+  5 7 1 3 0 0
+  0 7 1 3 0 5
+F default [4,3,2]
+  9 9 1 1 0 0
+  0 9 1 1 0 9
+G default [2]
+  2 3 1 1 0 0
+  0 3 1 1 0 2
+H default [5]
+  6 7 3 1 0 0
+  0 7 3 1 0 6
+I default [2]
+  6 11 1 1 0 0
+  0 11 1 1 0 6
+K default [2]
+  6 12 2 1 0 0
+  0 12 2 1 0 6
+L default [2,2,2]
+  6 11 1 1 0 0
+  0 11 1 1 0 6
+M default []
+  5 9 1 1 1 0 
+  0 9 1 1 1 5
+m default []       
+  5 9 1 2 1 0     Met oxidation
+  0 9 1 2 1 5
+N default []
+  4 6 2 2 0 0
+  0 6 2 2 0 4 
+P default []
+  5 7 1 1 0 0
+  0 7 1 1 0 5
+Q default []
+  5 8 2 2 0 0
+  0 8 2 2 0 5
+R default []
+  6 12 4 1 0 0
+  0 12 4 1 0 6
+S default [3]
+  3 5 1 2 0 0
+  0 5 1 2 0 3
+T default []
+  4 7 1 2 0 0
+  0 7 1 2 0 4
+V default [3,2]
+  5 9 1 1 0 0
+  0 9 1 1 0 5
+W default [4,2,2,3]
+  11 10 2 1 0 0
+  0 10 2 1 0 11
+Y default [4,3,2]
+  9 9 1 2 0 0
+  0 9 1 2 0 9
+X default []
+  0 1 0 0 0 0
+  0 1 0 0 0 0
+Z default []
+  0 2 0 1 0 0
+  0 2 0 1 0 0
